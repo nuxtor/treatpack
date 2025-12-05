@@ -1,0 +1,227 @@
+{
+    "generated_at": "2025-12-05 21:13:19",
+    "site_url": "http:\/\/wp-treatments.test",
+    "treatments": [
+        {
+            "ID": 13,
+            "post_title": "Essential Full Body (Excl. face, neck, chest, abs, shoulders &amp; back)",
+            "post_content": "Phase 4",
+            "post_excerpt": "",
+            "post_status": "publish",
+            "menu_order": 0,
+            "categories": [
+                "women-packages"
+            ],
+            "areas": [],
+            "featured_image_url": "http:\/\/wp-treatments.test\/wp-content\/uploads\/2025\/12\/new-client-offer_july-2024_d.jpg",
+            "default_deposit_type": "",
+            "default_deposit_value": ""
+        }
+    ],
+    "packages": [
+        {
+            "id": "1",
+            "treatment_id": "13",
+            "name": "",
+            "sessions": "10",
+            "total_price": "700.00",
+            "per_session_price": "70.00",
+            "discount_percent": "29.29",
+            "deposit_type": "fixed",
+            "deposit_value": "10.00",
+            "wc_product_id": "16",
+            "sort_order": "0",
+            "created_at": "2025-12-05 20:30:13",
+            "updated_at": "2025-12-05 20:30:13"
+        },
+        {
+            "id": "2",
+            "treatment_id": "13",
+            "name": "",
+            "sessions": "7",
+            "total_price": "550.00",
+            "per_session_price": "78.57",
+            "discount_percent": "20.64",
+            "deposit_type": "fixed",
+            "deposit_value": "10.00",
+            "wc_product_id": "17",
+            "sort_order": "1",
+            "created_at": "2025-12-05 20:30:13",
+            "updated_at": "2025-12-05 20:30:13"
+        },
+        {
+            "id": "3",
+            "treatment_id": "13",
+            "name": "",
+            "sessions": "5",
+            "total_price": "395.00",
+            "per_session_price": "79.00",
+            "discount_percent": "20.20",
+            "deposit_type": "fixed",
+            "deposit_value": "10.00",
+            "wc_product_id": "18",
+            "sort_order": "2",
+            "created_at": "2025-12-05 20:30:13",
+            "updated_at": "2025-12-05 20:30:13"
+        },
+        {
+            "id": "4",
+            "treatment_id": "13",
+            "name": "",
+            "sessions": "3",
+            "total_price": "250.00",
+            "per_session_price": "83.33",
+            "discount_percent": "15.83",
+            "deposit_type": "fixed",
+            "deposit_value": "10.00",
+            "wc_product_id": "19",
+            "sort_order": "3",
+            "created_at": "2025-12-05 20:30:13",
+            "updated_at": "2025-12-05 20:30:14"
+        }
+    ],
+    "categories": [
+        {
+            "term_id": 17,
+            "name": "Women Packages",
+            "slug": "women-packages",
+            "description": "",
+            "parent": 0
+        }
+    ],
+    "areas": [
+        {
+            "term_id": 22,
+            "name": "Abs",
+            "slug": "abs",
+            "description": "Abs",
+            "parent": 0
+        },
+        {
+            "term_id": 32,
+            "name": "Back",
+            "slug": "back",
+            "description": "Back",
+            "parent": 0
+        },
+        {
+            "term_id": 24,
+            "name": "Bikini Area",
+            "slug": "bikini-area",
+            "description": "Bikini Area",
+            "parent": 0
+        },
+        {
+            "term_id": 33,
+            "name": "Bikini Line",
+            "slug": "bikini-line",
+            "description": "Bikini Line",
+            "parent": 0
+        },
+        {
+            "term_id": 34,
+            "name": "Brazilian",
+            "slug": "brazilian",
+            "description": "Brazilian",
+            "parent": 0
+        },
+        {
+            "term_id": 36,
+            "name": "Buttocks",
+            "slug": "buttocks",
+            "description": "Buttocks",
+            "parent": 0
+        },
+        {
+            "term_id": 21,
+            "name": "Chest",
+            "slug": "chest",
+            "description": "Chest",
+            "parent": 0
+        },
+        {
+            "term_id": 29,
+            "name": "Chin",
+            "slug": "chin",
+            "description": "Chin",
+            "parent": 0
+        },
+        {
+            "term_id": 18,
+            "name": "Full Body",
+            "slug": "full-body",
+            "description": "Full Body",
+            "parent": 0
+        },
+        {
+            "term_id": 19,
+            "name": "Full Face",
+            "slug": "full-face",
+            "description": "Full Face",
+            "parent": 0
+        },
+        {
+            "term_id": 25,
+            "name": "Full Legs",
+            "slug": "full-legs",
+            "description": "Full Legs",
+            "parent": 0
+        },
+        {
+            "term_id": 30,
+            "name": "Half Arms",
+            "slug": "half-arms",
+            "description": "Half Arms",
+            "parent": 0
+        },
+        {
+            "term_id": 31,
+            "name": "Half Legs",
+            "slug": "half-legs",
+            "description": "Half Legs",
+            "parent": 0
+        },
+        {
+            "term_id": 35,
+            "name": "Hollywood",
+            "slug": "hollywood",
+            "description": "Hollywood",
+            "parent": 0
+        },
+        {
+            "term_id": 20,
+            "name": "Neck",
+            "slug": "neck",
+            "description": "Neck",
+            "parent": 0
+        },
+        {
+            "term_id": 26,
+            "name": "Perianal",
+            "slug": "perianal",
+            "description": "Perianal",
+            "parent": 0
+        },
+        {
+            "term_id": 23,
+            "name": "Shoulders",
+            "slug": "shoulders",
+            "description": "Shoulders",
+            "parent": 0
+        },
+        {
+            "term_id": 27,
+            "name": "Underarms",
+            "slug": "underarms",
+            "description": "Underarms",
+            "parent": 0
+        },
+        {
+            "term_id": 28,
+            "name": "Upper Lip",
+            "slug": "upper-lip",
+            "description": "Upper Lip",
+            "parent": 0
+        }
+    ]
+}
