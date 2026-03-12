@@ -1,0 +1,10 @@
+node_modules/
+*.zip
+.claude/
+*.log
+*.png
+*.json
+!composer.json
+!package.json
+.DS_Store
+Thumbs.db
