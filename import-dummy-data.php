@@ -25,11 +25,30 @@ if ( ! $is_cli ) {
 }
 
 // Find WordPress root
-$wp_root = dirname( dirname( dirname( dirname( __DIR__ ) ) ) );
+// __DIR__ = plugins/treatment-packages-deposits
+// Go up: plugins -> wp-content -> wordpress root
+$wp_root = dirname( dirname( dirname( __DIR__ ) ) );
 $wp_load = $wp_root . '/wp-load.php';
 
+// Try alternative paths if not found
 if ( ! file_exists( $wp_load ) ) {
-    die( "Could not find wp-load.php at: $wp_load\n" );
+    // Try ABSPATH style paths
+    $alternative_paths = array(
+        dirname( dirname( dirname( __DIR__ ) ) ) . '/wp-load.php',
+        dirname( dirname( dirname( dirname( __DIR__ ) ) ) ) . '/wp-load.php',
+        $_SERVER['DOCUMENT_ROOT'] . '/wp-load.php',
+    );
+
+    foreach ( $alternative_paths as $path ) {
+        if ( file_exists( $path ) ) {
+            $wp_load = $path;
+            break;
+        }
+    }
+}
+
+if ( ! file_exists( $wp_load ) ) {
+    die( "Could not find wp-load.php. Tried: $wp_load\nCurrent dir: " . __DIR__ . "\n" );
 }
 
 require_once $wp_load;
@@ -49,7 +68,7 @@ output( "Starting import..." );
 global $wpdb;
 
 // Load JSON data
-$json_file = __DIR__ . '/dummy-data.json';
+$json_file = __DIR__ . '/london-premier-laser-data.json';
 
 if ( ! file_exists( $json_file ) ) {
     die( "dummy-data.json not found at: $json_file\n" );
