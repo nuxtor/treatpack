@@ -91,6 +91,7 @@ final class Plugin {
         Packages\PackageAdminUI::init();
         Admin\AdminMenu::init();
         Admin\ImportExport::init();
+        Admin\ShortcodeGenerator::init();
     }
 
     /**
