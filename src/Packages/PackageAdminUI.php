@@ -85,6 +85,7 @@ class PackageAdminUI {
                 'i18n'    => array(
                     'confirmDelete'  => __( 'Are you sure you want to delete this package?', 'treatpack' ),
                     'payAsYouGo'     => __( 'Pay as you go', 'treatpack' ),
+                    /* translators: %d: number of sessions in the treatment course */
                     'courseOf'       => __( 'Course of %d', 'treatpack' ),
                 ),
             )
@@ -291,7 +292,7 @@ class PackageAdminUI {
     public static function save_packages( $post_id, $post ) {
         // Verify nonce
         if ( ! isset( $_POST['tp_packages_nonce'] ) ||
-             ! wp_verify_nonce( $_POST['tp_packages_nonce'], 'tp_save_packages' ) ) {
+             ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['tp_packages_nonce'] ) ), 'tp_save_packages' ) ) {
             return;
         }
 
@@ -306,7 +307,7 @@ class PackageAdminUI {
         }
 
         // Get submitted packages
-        $submitted_packages = isset( $_POST['tp_packages'] ) ? $_POST['tp_packages'] : array();
+        $submitted_packages = isset( $_POST['tp_packages'] ) ? map_deep( wp_unslash( $_POST['tp_packages'] ), 'sanitize_text_field' ) : array();
 
         // Get existing packages
         $existing_packages = PackageRepository::get_by_treatment( $post_id );

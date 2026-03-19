@@ -94,6 +94,7 @@ class AdminMenu {
      */
     public static function render_customer_packages_page() {
         // Check for single package view
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a read-only admin page, no form submission.
         $package_id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0;
 
         if ( $package_id ) {
@@ -110,9 +111,12 @@ class AdminMenu {
      */
     private static function render_packages_list() {
         // Get filters
-        $status_filter = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin list filters, no state change.
+        $status_filter = isset( $_GET['status'] ) ? sanitize_text_field( wp_unslash( $_GET['status'] ) ) : '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin list filters, no state change.
         $user_filter = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
-        $search = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin list filters, no state change.
+        $search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 
         // Get packages
         $packages = self::get_filtered_packages( $status_filter, $user_filter, $search );
@@ -137,7 +141,7 @@ class AdminMenu {
                     <span class="tp-stat-label"><?php esc_html_e( 'Sessions Remaining', 'treatpack' ); ?></span>
                 </div>
                 <div class="tp-stat-card">
-                    <span class="tp-stat-number"><?php echo wc_price( $stats['total_balance'] ); ?></span>
+                    <span class="tp-stat-number"><?php echo wp_kses_post( wc_price( $stats['total_balance'] ) ); ?></span>
                     <span class="tp-stat-label"><?php esc_html_e( 'Outstanding Balance', 'treatpack' ); ?></span>
                 </div>
                 <div class="tp-stat-card">
@@ -162,10 +166,9 @@ class AdminMenu {
                     <?php
                     // User dropdown
                     $users = get_users( array(
-                        'meta_key' => '',
-                        'orderby'  => 'display_name',
-                        'order'    => 'ASC',
-                        'number'   => 100,
+                        'orderby' => 'display_name',
+                        'order'   => 'ASC',
+                        'number'  => 100,
                     ) );
                     ?>
                     <select name="user_id">
@@ -269,9 +272,9 @@ class AdminMenu {
             </td>
             <td class="column-balance">
                 <?php if ( $package->remaining_balance > 0 ) : ?>
-                    <span class="tp-balance-due"><?php echo wc_price( $package->remaining_balance ); ?></span>
+                    <span class="tp-balance-due"><?php echo wp_kses_post( wc_price( $package->remaining_balance ) ); ?></span>
                     <br>
-                    <small><?php esc_html_e( 'of', 'treatpack' ); ?> <?php echo wc_price( $package->total_price ); ?></small>
+                    <small><?php esc_html_e( 'of', 'treatpack' ); ?> <?php echo wp_kses_post( wc_price( $package->total_price ) ); ?></small>
                 <?php else : ?>
                     <span class="tp-paid-full"><?php esc_html_e( 'Paid in full', 'treatpack' ); ?></span>
                 <?php endif; ?>
@@ -329,7 +332,7 @@ class AdminMenu {
                 printf(
                     /* translators: %d: package ID */
                     esc_html__( 'Package #%d', 'treatpack' ),
-                    $package->id
+                    (int) $package->id
                 );
                 ?>
                 <span class="tp-status tp-status-<?php echo esc_attr( $package->status ); ?>">
@@ -353,7 +356,7 @@ class AdminMenu {
                             printf(
                                 /* translators: %d: total sessions */
                                 esc_html__( 'of %d purchased', 'treatpack' ),
-                                $package->sessions_purchased
+                                (int) $package->sessions_purchased
                             );
                             ?>
                         </div>
@@ -375,17 +378,17 @@ class AdminMenu {
                     <table class="tp-detail-table">
                         <tr>
                             <th><?php esc_html_e( 'Total Price', 'treatpack' ); ?></th>
-                            <td><?php echo wc_price( $package->total_price ); ?></td>
+                            <td><?php echo wp_kses_post( wc_price( $package->total_price ) ); ?></td>
                         </tr>
                         <tr>
                             <th><?php esc_html_e( 'Deposit Paid', 'treatpack' ); ?></th>
-                            <td><?php echo wc_price( $package->deposit_paid ); ?></td>
+                            <td><?php echo wp_kses_post( wc_price( $package->deposit_paid ) ); ?></td>
                         </tr>
                         <tr class="tp-balance-row <?php echo $package->remaining_balance > 0 ? 'has-balance' : ''; ?>">
                             <th><?php esc_html_e( 'Remaining Balance', 'treatpack' ); ?></th>
                             <td>
                                 <?php if ( $package->remaining_balance > 0 ) : ?>
-                                    <strong><?php echo wc_price( $package->remaining_balance ); ?></strong>
+                                    <strong><?php echo wp_kses_post( wc_price( $package->remaining_balance ) ); ?></strong>
                                 <?php else : ?>
                                     <span class="tp-paid-full"><?php esc_html_e( 'Paid in full', 'treatpack' ); ?></span>
                                 <?php endif; ?>
@@ -519,9 +522,11 @@ class AdminMenu {
         $sql .= ' ORDER BY created_at DESC LIMIT 100';
 
         if ( ! empty( $params ) ) {
-            return $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table with dynamic filters, not suitable for object caching.
+            return $wpdb->get_results( $wpdb->prepare( $sql, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is built safely with placeholders above.
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- No user input in this branch; $sql contains only safe table prefix.
         return $wpdb->get_results( $sql );
     }
 
@@ -536,10 +541,14 @@ class AdminMenu {
         $table = $wpdb->prefix . 'tp_customer_packages';
 
         return array(
-            'total_active'    => (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'active'" ),
-            'total_completed' => (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'completed'" ),
-            'total_sessions'  => (int) $wpdb->get_var( "SELECT SUM(sessions_remaining) FROM {$table} WHERE status = 'active'" ) ?: 0,
-            'total_balance'   => (float) $wpdb->get_var( "SELECT SUM(remaining_balance) FROM {$table} WHERE status = 'active'" ) ?: 0,
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table aggregate query.
+            'total_active'    => (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE status = %s", 'active' ) ), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from $wpdb->prefix, safe.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table aggregate query.
+            'total_completed' => (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE status = %s", 'completed' ) ), // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from $wpdb->prefix, safe.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table aggregate query.
+            'total_sessions'  => (int) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(sessions_remaining) FROM {$table} WHERE status = %s", 'active' ) ) ?: 0, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from $wpdb->prefix, safe.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table aggregate query.
+            'total_balance'   => (float) $wpdb->get_var( $wpdb->prepare( "SELECT SUM(remaining_balance) FROM {$table} WHERE status = %s", 'active' ) ) ?: 0, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from $wpdb->prefix, safe.
         );
     }
 
@@ -554,7 +563,7 @@ class AdminMenu {
         }
 
         $package_id = isset( $_POST['package_id'] ) ? absint( $_POST['package_id'] ) : 0;
-        $notes = isset( $_POST['notes'] ) ? sanitize_textarea_field( $_POST['notes'] ) : '';
+        $notes = isset( $_POST['notes'] ) ? sanitize_textarea_field( wp_unslash( $_POST['notes'] ) ) : '';
 
         if ( ! $package_id ) {
             wp_send_json_error( array( 'message' => __( 'Invalid package.', 'treatpack' ) ) );
@@ -614,8 +623,8 @@ class AdminMenu {
         }
 
         $package_id = isset( $_POST['package_id'] ) ? absint( $_POST['package_id'] ) : 0;
-        $status = isset( $_POST['status'] ) ? sanitize_text_field( $_POST['status'] ) : '';
-        $reason = isset( $_POST['reason'] ) ? sanitize_textarea_field( $_POST['reason'] ) : '';
+        $status = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
+        $reason = isset( $_POST['reason'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reason'] ) ) : '';
 
         if ( ! $package_id || ! $status ) {
             wp_send_json_error( array( 'message' => __( 'Invalid package or status.', 'treatpack' ) ) );

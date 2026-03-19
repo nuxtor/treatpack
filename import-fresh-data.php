@@ -13,48 +13,58 @@
  * @package TreatmentPackages
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Security key for web access.
-define( 'IMPORT_SECRET_KEY', 'fresh-import-2026' );
+define( 'TPD_IMPORT_SECRET_KEY', 'fresh-import-2026' );
 
-$is_cli = ( php_sapi_name() === 'cli' );
+$tpd_is_cli = ( php_sapi_name() === 'cli' );
 
-if ( ! $is_cli ) {
-    if ( ! isset( $_GET['run'], $_GET['key'] ) || $_GET['key'] !== IMPORT_SECRET_KEY ) {
+if ( ! $tpd_is_cli ) {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Import script uses secret key auth, not nonces.
+    if ( ! isset( $_GET['run'], $_GET['key'] ) || sanitize_text_field( wp_unslash( $_GET['key'] ) ) !== TPD_IMPORT_SECRET_KEY ) {
         die( 'Access denied. Use: ?run=1&key=YOUR_SECRET_KEY' );
     }
     echo '<pre>';
 }
 
 // Load WordPress.
-$wp_root = dirname( dirname( dirname( __DIR__ ) ) );
-$wp_load = $wp_root . '/wp-load.php';
+$tpd_wp_root = dirname( dirname( dirname( __DIR__ ) ) );
+$tpd_wp_load = $tpd_wp_root . '/wp-load.php';
 
-if ( ! file_exists( $wp_load ) ) {
-    die( "Could not find wp-load.php at: $wp_load\n" );
+if ( ! file_exists( $tpd_wp_load ) ) {
+    die( esc_html( "Could not find wp-load.php at: $tpd_wp_load\n" ) );
 }
 
-require_once $wp_load;
+require_once $tpd_wp_load;
 
-function output( $msg ) {
-    echo $msg . "\n";
+/**
+ * Output a message to the console or browser.
+ *
+ * @param string $msg The message to output.
+ */
+function tpd_output( $msg ) {
+    echo esc_html( $msg ) . "\n";
     if ( ob_get_level() ) {
         ob_flush();
     }
     flush();
 }
 
-output( '=== Fresh Data Import ===' );
-output( 'Started: ' . current_time( 'mysql' ) );
+tpd_output( '=== Fresh Data Import ===' );
+tpd_output( 'Started: ' . current_time( 'mysql' ) );
 
 global $wpdb;
 
 // =============================================================================
 // STEP 1: REMOVE ALL EXISTING DATA
 // =============================================================================
-output( "\n--- Step 1: Removing existing data ---" );
+tpd_output( "\n--- Step 1: Removing existing data ---" );
 
 // 1a. Delete all WooCommerce products linked to packages.
-$wc_products = get_posts( array(
+$tpd_wc_products = get_posts( array(
     'post_type'      => 'product',
     'post_status'    => 'any',
     'posts_per_page' => -1,
@@ -67,12 +77,12 @@ $wc_products = get_posts( array(
     ),
 ) );
 
-$deleted_products = 0;
-foreach ( $wc_products as $product_id ) {
-    wp_delete_post( $product_id, true );
-    $deleted_products++;
+$tpd_deleted_products = 0;
+foreach ( $tpd_wc_products as $tpd_product_id ) {
+    wp_delete_post( $tpd_product_id, true );
+    $tpd_deleted_products++;
 }
-output( "Deleted $deleted_products WooCommerce package products." );
+tpd_output( "Deleted $tpd_deleted_products WooCommerce package products." );
 
 // 1b. Delete all treatment posts.
 $treatments = get_posts( array(
@@ -82,56 +92,58 @@ $treatments = get_posts( array(
     'fields'         => 'ids',
 ) );
 
-$deleted_treatments = 0;
+$tpd_deleted_treatments = 0;
 foreach ( $treatments as $treatment_id ) {
     wp_delete_post( $treatment_id, true );
-    $deleted_treatments++;
+    $tpd_deleted_treatments++;
 }
-output( "Deleted $deleted_treatments treatment posts." );
+tpd_output( "Deleted $tpd_deleted_treatments treatment posts." );
 
 // 1c. Truncate packages table.
-$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}tp_packages" );
-output( "Truncated tp_packages table." );
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Import script: truncating table during data reset.
+$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $wpdb->prefix . 'tp_packages' ) );
+tpd_output( "Truncated tp_packages table." );
 
 // 1d. Truncate customer packages table.
-$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}tp_customer_packages" );
-output( "Truncated tp_customer_packages table." );
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Import script: truncating table during data reset.
+$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $wpdb->prefix . 'tp_customer_packages' ) );
+tpd_output( "Truncated tp_customer_packages table." );
 
 // 1e. Remove treatment taxonomy terms.
 foreach ( array( 'treatment_category', 'treatment_area' ) as $taxonomy ) {
-    $terms = get_terms( array(
+    $tpd_terms = get_terms( array(
         'taxonomy'   => $taxonomy,
         'hide_empty' => false,
         'fields'     => 'ids',
     ) );
-    if ( ! is_wp_error( $terms ) ) {
-        foreach ( $terms as $term_id ) {
-            wp_delete_term( $term_id, $taxonomy );
+    if ( ! is_wp_error( $tpd_terms ) ) {
+        foreach ( $tpd_terms as $tpd_term_id ) {
+            wp_delete_term( $tpd_term_id, $taxonomy );
         }
     }
 }
-output( "Removed taxonomy terms." );
+tpd_output( "Removed taxonomy terms." );
 
-output( "All existing data removed." );
+tpd_output( "All existing data removed." );
 
 // =============================================================================
 // STEP 2: CREATE CATEGORIES
 // =============================================================================
-output( "\n--- Step 2: Creating categories ---" );
+tpd_output( "\n--- Step 2: Creating categories ---" );
 
-$women_cat = wp_insert_term( 'Women\'s Packages', 'treatment_category', array(
+$tpd_women_cat = wp_insert_term( 'Women\'s Packages', 'treatment_category', array(
     'slug'        => 'women-packages',
     'description' => 'Laser hair removal packages for women.',
 ) );
-$women_cat_id = is_wp_error( $women_cat ) ? 0 : $women_cat['term_id'];
-output( "Created category: Women's Packages (ID: $women_cat_id)" );
+$tpd_women_cat_id = is_wp_error( $tpd_women_cat ) ? 0 : $tpd_women_cat['term_id'];
+tpd_output( "Created category: Women's Packages (ID: $tpd_women_cat_id)" );
 
-$men_cat = wp_insert_term( 'Men\'s Packages', 'treatment_category', array(
+$tpd_men_cat = wp_insert_term( 'Men\'s Packages', 'treatment_category', array(
     'slug'        => 'men-packages',
     'description' => 'Laser hair removal packages for men.',
 ) );
-$men_cat_id = is_wp_error( $men_cat ) ? 0 : $men_cat['term_id'];
-output( "Created category: Men's Packages (ID: $men_cat_id)" );
+$tpd_men_cat_id = is_wp_error( $tpd_men_cat ) ? 0 : $tpd_men_cat['term_id'];
+tpd_output( "Created category: Men's Packages (ID: $tpd_men_cat_id)" );
 
 // =============================================================================
 // STEP 3: DEFINE TREATMENTS & PACKAGES DATA
@@ -714,10 +726,10 @@ $treatments_data = array(
 // =============================================================================
 // STEP 4: CREATE TREATMENTS & PACKAGES
 // =============================================================================
-output( "\n--- Step 3: Creating treatments & packages ---" );
+tpd_output( "\n--- Step 3: Creating treatments & packages ---" );
 
-$total_treatments = 0;
-$total_packages   = 0;
+$tpd_total_treatments = 0;
+$tpd_total_packages   = 0;
 
 foreach ( $treatments_data as $treatment_data ) {
     // Create treatment post.
@@ -728,14 +740,14 @@ foreach ( $treatments_data as $treatment_data ) {
     ) );
 
     if ( is_wp_error( $post_id ) ) {
-        output( "ERROR creating treatment: " . $treatment_data['name'] . ' - ' . $post_id->get_error_message() );
+        tpd_output( "ERROR creating treatment: " . $treatment_data['name'] . ' - ' . $post_id->get_error_message() );
         continue;
     }
 
-    $total_treatments++;
+    $tpd_total_treatments++;
 
     // Assign category.
-    $cat_id = ( 'men' === $treatment_data['category'] ) ? $men_cat_id : $women_cat_id;
+    $cat_id = ( 'men' === $treatment_data['category'] ) ? $tpd_men_cat_id : $tpd_women_cat_id;
     if ( $cat_id ) {
         wp_set_object_terms( $post_id, array( (int) $cat_id ), 'treatment_category' );
     }
@@ -744,48 +756,49 @@ foreach ( $treatments_data as $treatment_data ) {
     update_post_meta( $post_id, '_treatment_default_deposit_type', 'fixed' );
     update_post_meta( $post_id, '_treatment_default_deposit_value', 10 );
 
-    output( "Treatment: {$treatment_data['name']} (ID: $post_id)" );
+    tpd_output( "Treatment: {$treatment_data['name']} (ID: $post_id)" );
 
     // Create packages for this treatment.
-    foreach ( $treatment_data['packages'] as $pkg ) {
+    foreach ( $treatment_data['packages'] as $tpd_pkg ) {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Import script: inserting package data.
         $wpdb->insert(
             $wpdb->prefix . 'tp_packages',
             array(
                 'treatment_id'      => $post_id,
-                'name'              => $pkg['name'],
-                'sessions'          => $pkg['sessions'],
-                'total_price'       => $pkg['total_price'],
-                'per_session_price' => $pkg['per_session'],
-                'discount_percent'  => $pkg['discount'],
-                'deposit_type'      => $pkg['deposit_type'],
-                'deposit_value'     => $pkg['deposit_value'],
-                'sort_order'        => $pkg['sort'],
+                'name'              => $tpd_pkg['name'],
+                'sessions'          => $tpd_pkg['sessions'],
+                'total_price'       => $tpd_pkg['total_price'],
+                'per_session_price' => $tpd_pkg['per_session'],
+                'discount_percent'  => $tpd_pkg['discount'],
+                'deposit_type'      => $tpd_pkg['deposit_type'],
+                'deposit_value'     => $tpd_pkg['deposit_value'],
+                'sort_order'        => $tpd_pkg['sort'],
                 'created_at'        => current_time( 'mysql' ),
                 'updated_at'        => current_time( 'mysql' ),
             ),
             array( '%d', '%s', '%d', '%f', '%f', '%f', '%s', '%f', '%d', '%s', '%s' )
         );
 
-        $new_pkg_id = $wpdb->insert_id;
+        $tpd_new_pkg_id = $wpdb->insert_id;
 
-        if ( ! $new_pkg_id ) {
-            output( "  ERROR inserting package: {$pkg['sessions']} sessions" );
+        if ( ! $tpd_new_pkg_id ) {
+            tpd_output( "  ERROR inserting package: {$tpd_pkg['sessions']} sessions" );
             continue;
         }
 
-        $total_packages++;
+        $tpd_total_packages++;
 
         // Sync to WooCommerce product.
         if ( class_exists( 'TreatmentPackages\\Packages\\PackageRepository' ) ) {
-            $package_model = \TreatmentPackages\Packages\PackageRepository::find( $new_pkg_id );
-            if ( $package_model ) {
-                $product_id = \TreatmentPackages\Woo\ProductsSync::sync_package_to_product( $package_model );
-                $label = $pkg['name'] ?: "{$pkg['sessions']} sessions";
-                output( "  Package: $label @ £{$pkg['total_price']} -> WC Product #$product_id" );
+            $tpd_package_model = \TreatmentPackages\Packages\PackageRepository::find( $tpd_new_pkg_id );
+            if ( $tpd_package_model ) {
+                $tpd_product_id = \TreatmentPackages\Woo\ProductsSync::sync_package_to_product( $tpd_package_model );
+                $tpd_label = $tpd_pkg['name'] ?: "{$tpd_pkg['sessions']} sessions";
+                tpd_output( "  Package: $tpd_label @ £{$tpd_pkg['total_price']} -> WC Product #$tpd_product_id" );
             }
         } else {
-            $label = $pkg['name'] ?: "{$pkg['sessions']} sessions";
-            output( "  Package: $label @ £{$pkg['total_price']} (WC sync unavailable)" );
+            $tpd_label = $tpd_pkg['name'] ?: "{$tpd_pkg['sessions']} sessions";
+            tpd_output( "  Package: $tpd_label @ £{$tpd_pkg['total_price']} (WC sync unavailable)" );
         }
     }
 }
@@ -793,12 +806,12 @@ foreach ( $treatments_data as $treatment_data ) {
 // =============================================================================
 // DONE
 // =============================================================================
-output( "\n=== Import Complete ===" );
-output( "Treatments created: $total_treatments" );
-output( "Packages created: $total_packages" );
-output( 'Finished: ' . current_time( 'mysql' ) );
-output( "\nIMPORTANT: Delete this file after import for security!" );
+tpd_output( "\n=== Import Complete ===" );
+tpd_output( "Treatments created: $tpd_total_treatments" );
+tpd_output( "Packages created: $tpd_total_packages" );
+tpd_output( 'Finished: ' . current_time( 'mysql' ) );
+tpd_output( "\nIMPORTANT: Delete this file after import for security!" );
 
-if ( ! $is_cli ) {
+if ( ! $tpd_is_cli ) {
     echo '</pre>';
 }

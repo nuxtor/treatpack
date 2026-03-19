@@ -90,7 +90,7 @@ class CartHandler {
         );
 
         // Generate unique key to prevent merging items
-        $cart_item_data['unique_key'] = md5( microtime() . rand() );
+        $cart_item_data['unique_key'] = md5( microtime() . wp_rand() );
 
         return $cart_item_data;
     }
@@ -266,19 +266,19 @@ class CartHandler {
         <tr class="tp-deposit-full-price">
             <th><?php esc_html_e( 'Full Package Price', 'treatpack' ); ?></th>
             <td data-title="<?php esc_attr_e( 'Full Package Price', 'treatpack' ); ?>">
-                <?php echo wc_price( $total_full_price ); ?>
+                <?php echo wp_kses_post( wc_price( $total_full_price ) ); ?>
             </td>
         </tr>
         <tr class="tp-deposit-amount">
             <th><?php esc_html_e( 'Deposit (Paying Today)', 'treatpack' ); ?></th>
             <td data-title="<?php esc_attr_e( 'Deposit', 'treatpack' ); ?>">
-                <strong><?php echo wc_price( $total_deposit ); ?></strong>
+                <strong><?php echo wp_kses_post( wc_price( $total_deposit ) ); ?></strong>
             </td>
         </tr>
         <tr class="tp-deposit-remaining">
             <th><?php esc_html_e( 'Remaining Balance', 'treatpack' ); ?></th>
             <td data-title="<?php esc_attr_e( 'Remaining Balance', 'treatpack' ); ?>">
-                <?php echo wc_price( $total_remaining ); ?>
+                <?php echo wp_kses_post( wc_price( $total_remaining ) ); ?>
                 <small class="tp-balance-note">
                     <?php esc_html_e( '(Due at appointment)', 'treatpack' ); ?>
                 </small>
@@ -342,7 +342,7 @@ class CartHandler {
 
         wp_send_json_success( array(
             'message'    => __( 'Product added to cart.', 'treatpack' ),
-            'fragments'  => apply_filters( 'woocommerce_add_to_cart_fragments', $fragments ),
+            'fragments'  => apply_filters( 'woocommerce_add_to_cart_fragments', $fragments ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce core hook.
             'cart_hash'  => $cart_hash,
             'cart_count' => WC()->cart->get_cart_contents_count(),
         ) );

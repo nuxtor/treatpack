@@ -137,7 +137,7 @@ class OrderHandler {
                  * @param int                       $order_id            Order ID.
                  * @param \WC_Order_Item_Product    $item                Order item.
                  */
-                do_action( 'tp_order_package_created', $customer_package_id, $order_id, $item );
+                do_action( 'tpd_order_package_created', $customer_package_id, $order_id, $item );
             }
         }
 
@@ -247,16 +247,16 @@ class OrderHandler {
                     <?php if ( $package->remaining_balance > 0 ) : ?>
                         <div class="deposit-row">
                             <span><?php esc_html_e( 'Deposit Paid:', 'treatpack' ); ?></span>
-                            <span><?php echo wc_price( $package->deposit_paid ); ?></span>
-                        </div>
+                            <span><?php echo wp_kses_post( wc_price( $package->deposit_paid ) ); ?></span>
+                     </div>
                         <div class="deposit-row">
                             <span><?php esc_html_e( 'Balance Due:', 'treatpack' ); ?></span>
-                            <span><?php echo wc_price( $package->remaining_balance ); ?></span>
+                            <span><?php echo wp_kses_post( wc_price( $package->remaining_balance ) ); ?></span>
                         </div>
                     <?php else : ?>
                         <div class="deposit-row">
                             <span><?php esc_html_e( 'Amount Paid:', 'treatpack' ); ?></span>
-                            <span><?php echo wc_price( $package->total_price ); ?></span>
+                            <span><?php echo wp_kses_post( wc_price( $package->total_price ) ); ?></span>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -304,8 +304,8 @@ class OrderHandler {
                             printf(
                                 /* translators: 1: remaining sessions, 2: total sessions */
                                 esc_html__( '%1$d of %2$d remaining', 'treatpack' ),
-                                $package->sessions_remaining,
-                                $package->sessions_purchased
+                                intval( $package->sessions_remaining ),
+                                intval( $package->sessions_purchased )
                             );
                             ?>
                         </td>
@@ -317,7 +317,7 @@ class OrderHandler {
                         <?php if ( array_sum( array_column( $customer_packages, 'remaining_balance' ) ) > 0 ) : ?>
                             <td>
                                 <?php if ( $package->remaining_balance > 0 ) : ?>
-                                    <?php echo wc_price( $package->remaining_balance ); ?>
+                                    <?php echo wp_kses_post( wc_price( $package->remaining_balance ) ); ?>
                                 <?php else : ?>
                                     <span class="tp-paid-in-full"><?php esc_html_e( 'Paid', 'treatpack' ); ?></span>
                                 <?php endif; ?>

@@ -24,6 +24,13 @@ class PackageRepository {
     const TABLE_NAME = 'tp_packages';
 
     /**
+     * Cache group name
+     *
+     * @var string
+     */
+    const CACHE_GROUP = 'tpd_packages';
+
+    /**
      * Get the full table name with prefix
      *
      * @return string
@@ -31,6 +38,30 @@ class PackageRepository {
     public static function get_table_name() {
         global $wpdb;
         return $wpdb->prefix . self::TABLE_NAME;
+    }
+
+    /**
+     * Invalidate all caches related to a treatment or package.
+     *
+     * @param int $package_id   Package ID.
+     * @param int $treatment_id Treatment post ID.
+     * @param int $product_id   WooCommerce product ID.
+     */
+    private static function invalidate_cache( $package_id = 0, $treatment_id = 0, $product_id = 0 ) {
+        if ( $package_id ) {
+            wp_cache_delete( 'pkg_' . $package_id, self::CACHE_GROUP );
+        }
+        if ( $treatment_id ) {
+            wp_cache_delete( 'treatment_' . $treatment_id, self::CACHE_GROUP );
+            wp_cache_delete( 'count_treatment_' . $treatment_id, self::CACHE_GROUP );
+            wp_cache_delete( 'min_price_treatment_' . $treatment_id, self::CACHE_GROUP );
+            wp_cache_delete( 'max_discount_treatment_' . $treatment_id, self::CACHE_GROUP );
+        }
+        if ( $product_id ) {
+            wp_cache_delete( 'product_' . $product_id, self::CACHE_GROUP );
+        }
+        wp_cache_delete( 'all_packages', self::CACHE_GROUP );
+        wp_cache_delete( 'search_packages', self::CACHE_GROUP );
     }
 
     /**
@@ -42,19 +73,31 @@ class PackageRepository {
     public static function find( $id ) {
         global $wpdb;
 
+        $cache_key = 'pkg_' . $id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
-        $row = $wpdb->get_row(
+        $row   = $wpdb->get_row(
             $wpdb->prepare(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe.
                 "SELECT * FROM {$table} WHERE id = %d",
                 $id
             )
         );
 
         if ( ! $row ) {
+            wp_cache_set( $cache_key, null, self::CACHE_GROUP, HOUR_IN_SECONDS );
             return null;
         }
 
-        return new PackageModel( $row );
+        $package = new PackageModel( $row );
+        wp_cache_set( $cache_key, $package, self::CACHE_GROUP, HOUR_IN_SECONDS );
+
+        return $package;
     }
 
     /**
@@ -66,19 +109,31 @@ class PackageRepository {
     public static function find_by_product_id( $product_id ) {
         global $wpdb;
 
+        $cache_key = 'product_' . $product_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
-        $row = $wpdb->get_row(
+        $row   = $wpdb->get_row(
             $wpdb->prepare(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe.
                 "SELECT * FROM {$table} WHERE wc_product_id = %d",
                 $product_id
             )
         );
 
         if ( ! $row ) {
+            wp_cache_set( $cache_key, null, self::CACHE_GROUP, HOUR_IN_SECONDS );
             return null;
         }
 
-        return new PackageModel( $row );
+        $package = new PackageModel( $row );
+        wp_cache_set( $cache_key, $package, self::CACHE_GROUP, HOUR_IN_SECONDS );
+
+        return $package;
     }
 
     /**
@@ -97,7 +152,6 @@ class PackageRepository {
         );
 
         $args = wp_parse_args( $args, $defaults );
-        $table = self::get_table_name();
 
         // Sanitize orderby
         $allowed_orderby = array( 'sort_order', 'sessions', 'total_price', 'name', 'id', 'created_at' );
@@ -106,8 +160,18 @@ class PackageRepository {
         // Sanitize order
         $order = 'DESC' === strtoupper( $args['order'] ) ? 'DESC' : 'ASC';
 
+        $cache_key = 'treatment_' . $treatment_id . '_' . $orderby . '_' . $order;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
+        $table = self::get_table_name();
+
         $rows = $wpdb->get_results(
             $wpdb->prepare(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name and sanitized orderby/order are safe.
                 "SELECT * FROM {$table} WHERE treatment_id = %d ORDER BY {$orderby} {$order}",
                 $treatment_id
             )
@@ -117,6 +181,8 @@ class PackageRepository {
         foreach ( $rows as $row ) {
             $packages[] = new PackageModel( $row );
         }
+
+        wp_cache_set( $cache_key, $packages, self::CACHE_GROUP, HOUR_IN_SECONDS );
 
         return $packages;
     }
@@ -147,18 +213,35 @@ class PackageRepository {
         // Sanitize order
         $order = 'DESC' === strtoupper( $args['order'] ) ? 'DESC' : 'ASC';
 
-        $sql = "SELECT * FROM {$table} ORDER BY {$orderby} {$order}";
+        $cache_key = 'all_' . $orderby . '_' . $order . '_' . intval( $args['limit'] ) . '_' . intval( $args['offset'] );
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
 
-        if ( $args['limit'] > 0 ) {
-            $sql .= $wpdb->prepare( ' LIMIT %d OFFSET %d', $args['limit'], $args['offset'] );
+        if ( false !== $cached ) {
+            return $cached;
         }
 
-        $rows = $wpdb->get_results( $sql );
+        if ( $args['limit'] > 0 ) {
+            $rows = $wpdb->get_results(
+                $wpdb->prepare(
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name and sanitized orderby/order are safe.
+                    "SELECT * FROM {$table} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d",
+                    $args['limit'],
+                    $args['offset']
+                )
+            );
+        } else {
+            $rows = $wpdb->get_results(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name and sanitized orderby/order are safe.
+                "SELECT * FROM {$table} ORDER BY {$orderby} {$order}"
+            );
+        }
 
         $packages = array();
         foreach ( $rows as $row ) {
             $packages[] = new PackageModel( $row );
         }
+
+        wp_cache_set( $cache_key, $packages, self::CACHE_GROUP, HOUR_IN_SECONDS );
 
         return $packages;
     }
@@ -209,6 +292,7 @@ class PackageRepository {
             $data['updated_at'] = current_time( 'mysql' );
             $format[] = '%s';
 
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- write operation, cache invalidated below.
             $result = $wpdb->update(
                 $table,
                 $data,
@@ -227,6 +311,7 @@ class PackageRepository {
             $format[] = '%s';
             $format[] = '%s';
 
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- write operation, cache invalidated below.
             $result = $wpdb->insert( $table, $data, $format );
 
             if ( false === $result ) {
@@ -236,8 +321,11 @@ class PackageRepository {
             $package->set_id( $wpdb->insert_id );
         }
 
-        // Trigger action for WooCommerce sync
-        do_action( 'tp_package_saved', $package );
+        // Invalidate caches.
+        self::invalidate_cache( $package->get_id(), $package->get_treatment_id(), $package->get_wc_product_id() );
+
+        // Trigger action for WooCommerce sync.
+        do_action( 'tpd_package_saved', $package );
 
         return $package;
     }
@@ -260,9 +348,10 @@ class PackageRepository {
             return false;
         }
 
-        // Trigger action before deletion (for WooCommerce product cleanup)
-        do_action( 'tp_package_before_delete', $package );
+        // Trigger action before deletion (for WooCommerce product cleanup).
+        do_action( 'tpd_package_before_delete', $package );
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- write operation, cache invalidated below.
         $result = $wpdb->delete(
             $table,
             array( 'id' => $id ),
@@ -273,8 +362,11 @@ class PackageRepository {
             return false;
         }
 
-        // Trigger action after deletion
-        do_action( 'tp_package_deleted', $id, $package );
+        // Invalidate caches.
+        self::invalidate_cache( $id, $package->get_treatment_id(), $package->get_wc_product_id() );
+
+        // Trigger action after deletion.
+        do_action( 'tpd_package_deleted', $id, $package );
 
         return true;
     }
@@ -294,9 +386,10 @@ class PackageRepository {
         $packages = self::get_by_treatment( $treatment_id );
 
         foreach ( $packages as $package ) {
-            do_action( 'tp_package_before_delete', $package );
+            do_action( 'tpd_package_before_delete', $package );
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- write operation, cache invalidated below.
         $result = $wpdb->delete(
             $table,
             array( 'treatment_id' => $treatment_id ),
@@ -305,7 +398,8 @@ class PackageRepository {
 
         if ( $result > 0 ) {
             foreach ( $packages as $package ) {
-                do_action( 'tp_package_deleted', $package->get_id(), $package );
+                self::invalidate_cache( $package->get_id(), $treatment_id, $package->get_wc_product_id() );
+                do_action( 'tpd_package_deleted', $package->get_id(), $package );
             }
         }
 
@@ -321,14 +415,26 @@ class PackageRepository {
     public static function count_by_treatment( $treatment_id ) {
         global $wpdb;
 
+        $cache_key = 'count_treatment_' . $treatment_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return (int) $cached;
+        }
+
         $table = self::get_table_name();
 
-        return (int) $wpdb->get_var(
+        $count = (int) $wpdb->get_var(
             $wpdb->prepare(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe.
                 "SELECT COUNT(*) FROM {$table} WHERE treatment_id = %d",
                 $treatment_id
             )
         );
+
+        wp_cache_set( $cache_key, $count, self::CACHE_GROUP, HOUR_IN_SECONDS );
+
+        return $count;
     }
 
     /**
@@ -340,16 +446,27 @@ class PackageRepository {
     public static function get_min_per_session_price( $treatment_id ) {
         global $wpdb;
 
+        $cache_key = 'min_price_treatment_' . $treatment_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
         $result = $wpdb->get_var(
             $wpdb->prepare(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe.
                 "SELECT MIN(per_session_price) FROM {$table} WHERE treatment_id = %d",
                 $treatment_id
             )
         );
 
-        return $result !== null ? (float) $result : null;
+        $value = $result !== null ? (float) $result : null;
+        wp_cache_set( $cache_key, $value, self::CACHE_GROUP, HOUR_IN_SECONDS );
+
+        return $value;
     }
 
     /**
@@ -361,16 +478,27 @@ class PackageRepository {
     public static function get_max_discount( $treatment_id ) {
         global $wpdb;
 
+        $cache_key = 'max_discount_treatment_' . $treatment_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
         $result = $wpdb->get_var(
             $wpdb->prepare(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe.
                 "SELECT MAX(discount_percent) FROM {$table} WHERE treatment_id = %d",
                 $treatment_id
             )
         );
 
-        return $result !== null ? (float) $result : null;
+        $value = $result !== null ? (float) $result : null;
+        wp_cache_set( $cache_key, $value, self::CACHE_GROUP, HOUR_IN_SECONDS );
+
+        return $value;
     }
 
     /**
@@ -385,6 +513,7 @@ class PackageRepository {
         $table = self::get_table_name();
 
         foreach ( $order_map as $package_id => $sort_order ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- write operation, cache invalidated below.
             $wpdb->update(
                 $table,
                 array(
@@ -395,7 +524,13 @@ class PackageRepository {
                 array( '%d', '%s' ),
                 array( '%d' )
             );
+
+            wp_cache_delete( 'pkg_' . (int) $package_id, self::CACHE_GROUP );
         }
+
+        // Invalidate list caches.
+        wp_cache_delete( 'all_packages', self::CACHE_GROUP );
+        wp_cache_delete( 'search_packages', self::CACHE_GROUP );
 
         return true;
     }
@@ -425,32 +560,42 @@ class PackageRepository {
             'limit'        => 20,
         );
 
-        $args = wp_parse_args( $args, $defaults );
+        $args  = wp_parse_args( $args, $defaults );
         $table = self::get_table_name();
 
-        $sql = "SELECT * FROM {$table} WHERE name LIKE %s";
+        $cache_key = 'search_' . md5( $search . wp_json_encode( $args ) );
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe.
+        $sql    = "SELECT * FROM {$table} WHERE name LIKE %s";
         $params = array( '%' . $wpdb->esc_like( $search ) . '%' );
 
         if ( $args['treatment_id'] > 0 ) {
-            $sql .= ' AND treatment_id = %d';
+            $sql     .= ' AND treatment_id = %d';
             $params[] = $args['treatment_id'];
         }
 
         $sql .= ' ORDER BY name ASC';
 
         if ( $args['limit'] > 0 ) {
-            $sql .= ' LIMIT %d';
+            $sql     .= ' LIMIT %d';
             $params[] = $args['limit'];
         }
 
         $rows = $wpdb->get_results(
-            $wpdb->prepare( $sql, $params )
+            $wpdb->prepare( $sql, $params ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is built with safe table name and all variables use placeholders.
         );
 
         $packages = array();
         foreach ( $rows as $row ) {
             $packages[] = new PackageModel( $row );
         }
+
+        wp_cache_set( $cache_key, $packages, self::CACHE_GROUP, HOUR_IN_SECONDS );
 
         return $packages;
     }

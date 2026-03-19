@@ -24,6 +24,13 @@ class CustomerPackagesRepository {
     const TABLE_NAME = 'tp_customer_packages';
 
     /**
+     * Cache group
+     *
+     * @var string
+     */
+    const CACHE_GROUP = 'tpd_customer_packages';
+
+    /**
      * Package statuses
      */
     const STATUS_ACTIVE    = 'active';
@@ -42,6 +49,16 @@ class CustomerPackagesRepository {
     }
 
     /**
+     * Invalidate all caches for a given user (and optionally specific keys).
+     *
+     * @param int $user_id User ID.
+     * @return void
+     */
+    private static function invalidate_cache( $user_id = 0 ) {
+        wp_cache_flush_group( self::CACHE_GROUP );
+    }
+
+    /**
      * Find a customer package by ID
      *
      * @param int $id Customer package ID.
@@ -50,14 +67,27 @@ class CustomerPackagesRepository {
     public static function find( $id ) {
         global $wpdb;
 
+        $cache_key = 'find_' . $id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
-        return $wpdb->get_row(
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
+        $result = $wpdb->get_row(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
             $wpdb->prepare(
                 "SELECT * FROM {$table} WHERE id = %d",
                 $id
             )
         );
+
+        wp_cache_set( $cache_key, $result, self::CACHE_GROUP );
+
+        return $result;
     }
 
     /**
@@ -69,14 +99,27 @@ class CustomerPackagesRepository {
     public static function find_by_order_item( $order_item_id ) {
         global $wpdb;
 
+        $cache_key = 'find_by_order_item_' . $order_item_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
-        return $wpdb->get_row(
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
+        $result = $wpdb->get_row(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
             $wpdb->prepare(
                 "SELECT * FROM {$table} WHERE order_item_id = %d",
                 $order_item_id
             )
         );
+
+        wp_cache_set( $cache_key, $result, self::CACHE_GROUP );
+
+        return $result;
     }
 
     /**
@@ -98,8 +141,17 @@ class CustomerPackagesRepository {
         );
 
         $args = wp_parse_args( $args, $defaults );
+
+        $cache_key = 'get_by_user_' . $user_id . '_' . md5( wp_json_encode( $args ) );
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
         $sql = "SELECT * FROM {$table} WHERE user_id = %d";
         $params = array( $user_id );
 
@@ -128,9 +180,15 @@ class CustomerPackagesRepository {
             $params[] = $args['offset'];
         }
 
-        return $wpdb->get_results(
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
+        $results = $wpdb->get_results(
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is built safely with placeholders above.
             $wpdb->prepare( $sql, $params )
         );
+
+        wp_cache_set( $cache_key, $results, self::CACHE_GROUP );
+
+        return $results;
     }
 
     /**
@@ -154,14 +212,27 @@ class CustomerPackagesRepository {
     public static function get_by_order( $order_id ) {
         global $wpdb;
 
+        $cache_key = 'get_by_order_' . $order_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
-        return $wpdb->get_results(
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
+        $results = $wpdb->get_results(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
             $wpdb->prepare(
                 "SELECT * FROM {$table} WHERE order_id = %d ORDER BY id ASC",
                 $order_id
             )
         );
+
+        wp_cache_set( $cache_key, $results, self::CACHE_GROUP );
+
+        return $results;
     }
 
     /**
@@ -175,8 +246,16 @@ class CustomerPackagesRepository {
     public static function get_by_user_and_treatment( $user_id, $treatment_id, $status = '' ) {
         global $wpdb;
 
+        $cache_key = 'get_by_user_treatment_' . $user_id . '_' . $treatment_id . '_' . $status;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
         $sql = "SELECT * FROM {$table} WHERE user_id = %d AND treatment_id = %d";
         $params = array( $user_id, $treatment_id );
 
@@ -187,9 +266,15 @@ class CustomerPackagesRepository {
 
         $sql .= ' ORDER BY created_at DESC';
 
-        return $wpdb->get_results(
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
+        $results = $wpdb->get_results(
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is built safely with placeholders above.
             $wpdb->prepare( $sql, $params )
         );
+
+        wp_cache_set( $cache_key, $results, self::CACHE_GROUP );
+
+        return $results;
     }
 
     /**
@@ -223,6 +308,7 @@ class CustomerPackagesRepository {
 
         $data = wp_parse_args( $data, $defaults );
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table insert.
         $result = $wpdb->insert(
             $table,
             array(
@@ -254,13 +340,15 @@ class CustomerPackagesRepository {
 
         $insert_id = $wpdb->insert_id;
 
+        self::invalidate_cache( $data['user_id'] );
+
         /**
          * Action fired after a customer package is created
          *
          * @param int   $insert_id Customer package ID.
          * @param array $data      Package data.
          */
-        do_action( 'tp_customer_package_created', $insert_id, $data );
+        do_action( 'tpd_customer_package_created', $insert_id, $data );
 
         return $insert_id;
     }
@@ -292,6 +380,7 @@ class CustomerPackagesRepository {
             }
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table update; cache invalidated below.
         $result = $wpdb->update(
             $table,
             $data,
@@ -301,13 +390,15 @@ class CustomerPackagesRepository {
         );
 
         if ( false !== $result ) {
+            self::invalidate_cache();
+
             /**
              * Action fired after a customer package is updated
              *
              * @param int   $id   Customer package ID.
              * @param array $data Updated data.
              */
-            do_action( 'tp_customer_package_updated', $id, $data );
+            do_action( 'tpd_customer_package_updated', $id, $data );
         }
 
         return false !== $result;
@@ -364,7 +455,7 @@ class CustomerPackagesRepository {
          * @param int    $new_remaining Remaining sessions.
          * @param object $package       Package data before update.
          */
-        do_action( 'tp_session_used', $id, $new_remaining, $package );
+        do_action( 'tpd_session_used', $id, $new_remaining, $package );
 
         return array(
             'sessions_remaining' => $new_remaining,
@@ -417,7 +508,7 @@ class CustomerPackagesRepository {
          * @param float  $new_balance    New remaining balance.
          * @param object $package        Package data before update.
          */
-        do_action( 'tp_payment_recorded', $id, $payment_amount, $new_balance, $package );
+        do_action( 'tpd_payment_recorded', $id, $payment_amount, $new_balance, $package );
 
         return $new_balance;
     }
@@ -463,8 +554,16 @@ class CustomerPackagesRepository {
     public static function count( $user_id = 0, $status = '' ) {
         global $wpdb;
 
+        $cache_key = 'count_' . $user_id . '_' . $status;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
         $sql = "SELECT COUNT(*) FROM {$table} WHERE 1=1";
         $params = array();
 
@@ -479,10 +578,19 @@ class CustomerPackagesRepository {
         }
 
         if ( ! empty( $params ) ) {
-            return (int) $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
+            $result = (int) $wpdb->get_var(
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is built safely with placeholders above.
+                $wpdb->prepare( $sql, $params )
+            );
+        } else {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared -- No parameters needed for unfiltered count.
+            $result = (int) $wpdb->get_var( $sql );
         }
 
-        return (int) $wpdb->get_var( $sql );
+        wp_cache_set( $cache_key, $result, self::CACHE_GROUP );
+
+        return $result;
     }
 
     /**
@@ -495,8 +603,16 @@ class CustomerPackagesRepository {
     public static function get_total_sessions_remaining( $user_id, $treatment_id = 0 ) {
         global $wpdb;
 
+        $cache_key = 'sessions_remaining_' . $user_id . '_' . $treatment_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
         $sql = "SELECT SUM(sessions_remaining) FROM {$table} WHERE user_id = %d AND status = %s";
         $params = array( $user_id, self::STATUS_ACTIVE );
 
@@ -505,9 +621,17 @@ class CustomerPackagesRepository {
             $params[] = $treatment_id;
         }
 
-        $result = $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
+        $result = $wpdb->get_var(
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is built safely with placeholders above.
+            $wpdb->prepare( $sql, $params )
+        );
 
-        return $result ? (int) $result : 0;
+        $value = $result ? (int) $result : 0;
+
+        wp_cache_set( $cache_key, $value, self::CACHE_GROUP );
+
+        return $value;
     }
 
     /**
@@ -519,9 +643,18 @@ class CustomerPackagesRepository {
     public static function get_total_remaining_balance( $user_id ) {
         global $wpdb;
 
+        $cache_key = 'remaining_balance_' . $user_id;
+        $cached    = wp_cache_get( $cache_key, self::CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
         $table = self::get_table_name();
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query.
         $result = $wpdb->get_var(
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is a safe prefixed table name.
             $wpdb->prepare(
                 "SELECT SUM(remaining_balance) FROM {$table} WHERE user_id = %d AND status = %s",
                 $user_id,
@@ -529,7 +662,11 @@ class CustomerPackagesRepository {
             )
         );
 
-        return $result ? (float) $result : 0.00;
+        $value = $result ? (float) $result : 0.00;
+
+        wp_cache_set( $cache_key, $value, self::CACHE_GROUP );
+
+        return $value;
     }
 
     /**
@@ -549,6 +686,7 @@ class CustomerPackagesRepository {
             return false;
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table delete; cache invalidated below.
         $result = $wpdb->delete(
             $table,
             array( 'id' => $id ),
@@ -556,13 +694,15 @@ class CustomerPackagesRepository {
         );
 
         if ( false !== $result ) {
+            self::invalidate_cache( $package->user_id );
+
             /**
              * Action fired after a customer package is deleted
              *
              * @param int    $id      Customer package ID.
              * @param object $package Package data before deletion.
              */
-            do_action( 'tp_customer_package_deleted', $id, $package );
+            do_action( 'tpd_customer_package_deleted', $id, $package );
         }
 
         return false !== $result;

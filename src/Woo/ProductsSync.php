@@ -46,10 +46,10 @@ class ProductsSync {
      */
     public static function init() {
         // Sync on package save
-        add_action( 'tp_package_saved', array( __CLASS__, 'sync_package_to_product' ) );
+        add_action( 'tpd_package_saved', array( __CLASS__, 'sync_package_to_product' ) );
 
         // Delete product on package delete
-        add_action( 'tp_package_before_delete', array( __CLASS__, 'delete_product_for_package' ) );
+        add_action( 'tpd_package_before_delete', array( __CLASS__, 'delete_product_for_package' ) );
 
         // Clean up when treatment is deleted
         add_action( 'before_delete_post', array( __CLASS__, 'on_treatment_delete' ) );
@@ -168,7 +168,7 @@ class ProductsSync {
          * @param int          $product_id WooCommerce product ID.
          * @param PackageModel $package    Package model.
          */
-        do_action( 'tp_package_product_synced', $product_id, $package );
+        do_action( 'tpd_package_product_synced', $product_id, $package );
 
         self::$syncing = false;
 
@@ -203,7 +203,7 @@ class ProductsSync {
          * @param int          $product_id Deleted product ID.
          * @param PackageModel $package    Package model.
          */
-        do_action( 'tp_package_product_deleted', $product_id, $package );
+        do_action( 'tpd_package_product_deleted', $product_id, $package );
     }
 
     /**
@@ -236,6 +236,7 @@ class ProductsSync {
             'post_status'    => 'any',
             'posts_per_page' => -1,
             'fields'         => 'ids',
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Required to find products by treatment ID.
             'meta_query'     => array(
                 array(
                     'key'   => self::META_KEY_TREATMENT_ID,
@@ -260,6 +261,7 @@ class ProductsSync {
             'post_status'    => 'publish',
             'posts_per_page' => 1,
             'fields'         => 'ids',
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Required to find product by package ID.
             'meta_query'     => array(
                 array(
                     'key'   => self::META_KEY_PACKAGE_ID,
@@ -322,6 +324,7 @@ class ProductsSync {
         }
 
         // Check if we want to show treatment products
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only filter parameter, no state change.
         $show_treatment_products = isset( $_GET['tp_show_packages'] ) && '1' === $_GET['tp_show_packages'];
 
         if ( $show_treatment_products ) {

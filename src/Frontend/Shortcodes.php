@@ -249,6 +249,7 @@ class Shortcodes {
         );
 
         if ( ! empty( $category ) ) {
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Required for taxonomy filtering.
             $args['tax_query'] = array(
                 array(
                     'taxonomy' => TreatmentTaxonomies::CATEGORY_TAXONOMY,
@@ -312,6 +313,7 @@ class Shortcodes {
             'posts_per_page' => -1,
             'orderby'        => $atts['orderby'],
             'order'          => $atts['order'],
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Required for taxonomy filtering.
             'tax_query'      => array(
                 array(
                     'taxonomy' => TreatmentTaxonomies::CATEGORY_TAXONOMY,
@@ -445,7 +447,7 @@ class Shortcodes {
     public static function ajax_filter_treatments() {
         check_ajax_referer( 'tp_deposits_nonce', 'nonce' );
 
-        $category = isset( $_POST['category'] ) ? sanitize_text_field( $_POST['category'] ) : '';
+        $category = isset( $_POST['category'] ) ? sanitize_text_field( wp_unslash( $_POST['category'] ) ) : '';
 
         $treatments = self::get_treatments( $category, array(
             'orderby' => 'menu_order',

@@ -188,7 +188,7 @@ class TreatmentPostType {
     public static function save_meta( $post_id, $post ) {
         // Verify nonce
         if ( ! isset( $_POST['tp_treatment_settings_nonce'] ) ||
-             ! wp_verify_nonce( $_POST['tp_treatment_settings_nonce'], 'tp_treatment_settings' ) ) {
+             ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['tp_treatment_settings_nonce'] ) ), 'tp_treatment_settings' ) ) {
             return;
         }
 
@@ -204,13 +204,13 @@ class TreatmentPostType {
 
         // Save base price
         if ( isset( $_POST['tp_base_price'] ) ) {
-            $base_price = sanitize_text_field( $_POST['tp_base_price'] );
+            $base_price = sanitize_text_field( wp_unslash( $_POST['tp_base_price'] ) );
             update_post_meta( $post_id, '_tp_base_price', $base_price );
         }
 
         // Save default deposit type
         if ( isset( $_POST['tp_default_deposit_type'] ) ) {
-            $deposit_type = sanitize_text_field( $_POST['tp_default_deposit_type'] );
+            $deposit_type = sanitize_text_field( wp_unslash( $_POST['tp_default_deposit_type'] ) );
             if ( in_array( $deposit_type, array( 'none', 'fixed', 'percentage' ), true ) ) {
                 update_post_meta( $post_id, '_tp_default_deposit_type', $deposit_type );
             }
@@ -218,7 +218,7 @@ class TreatmentPostType {
 
         // Save default deposit value
         if ( isset( $_POST['tp_default_deposit_value'] ) ) {
-            $deposit_value = sanitize_text_field( $_POST['tp_default_deposit_value'] );
+            $deposit_value = sanitize_text_field( wp_unslash( $_POST['tp_default_deposit_value'] ) );
             update_post_meta( $post_id, '_tp_default_deposit_value', $deposit_value );
         }
     }
@@ -265,14 +265,20 @@ class TreatmentPostType {
                 break;
 
             case 'tp_packages':
-                global $wpdb;
-                $table_name = $wpdb->prefix . 'tp_packages';
-                $count = $wpdb->get_var(
-                    $wpdb->prepare(
-                        "SELECT COUNT(*) FROM {$table_name} WHERE treatment_id = %d",
-                        $post_id
-                    )
-                );
+                $cache_key = 'tpd_package_count_' . $post_id;
+                $count     = wp_cache_get( $cache_key, 'tpd' );
+
+                if ( false === $count ) {
+                    global $wpdb;
+                    $table_name = $wpdb->prefix . 'tp_packages';
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table query, no WP API available.
+                    $count = $wpdb->get_var(
+                        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table_name is safe, built from $wpdb->prefix.
+                        $wpdb->prepare( "SELECT COUNT(*) FROM {$table_name} WHERE treatment_id = %d", $post_id )
+                    );
+                    wp_cache_set( $cache_key, $count, 'tpd', HOUR_IN_SECONDS );
+                }
+
                 echo esc_html( $count ?: '0' );
                 break;
 

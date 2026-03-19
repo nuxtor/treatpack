@@ -206,7 +206,7 @@ class TreatmentTaxonomies {
             'post_type'      => TreatmentPostType::POST_TYPE,
             'posts_per_page' => -1,
             'post_status'    => 'publish',
-            'tax_query'      => $tax_query,
+            'tax_query'      => $tax_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Taxonomy query required for filtering treatments by category.
             'orderby'        => 'menu_order title',
             'order'          => 'ASC',
         );

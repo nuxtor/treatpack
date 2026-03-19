@@ -92,12 +92,14 @@ class ImportExport {
         $message = '';
         $message_type = '';
 
-        if ( isset( $_GET['exported'] ) && $_GET['exported'] === '1' ) {
+        $tpd_nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
+
+        if ( isset( $_GET['exported'] ) && wp_verify_nonce( $tpd_nonce, 'tpd_admin_notice' ) && $_GET['exported'] === '1' ) {
             $message = __( 'Export completed successfully.', 'treatpack' );
             $message_type = 'success';
         }
 
-        if ( isset( $_GET['imported'] ) ) {
+        if ( isset( $_GET['imported'] ) && wp_verify_nonce( $tpd_nonce, 'tpd_admin_notice' ) ) {
             $imported = absint( $_GET['imported'] );
             $message = sprintf(
                 /* translators: %d: number of treatments imported */
@@ -107,14 +109,14 @@ class ImportExport {
             $message_type = 'success';
         }
 
-        if ( isset( $_GET['import_error'] ) ) {
-            $message = urldecode( $_GET['import_error'] );
+        if ( isset( $_GET['import_error'] ) && wp_verify_nonce( $tpd_nonce, 'tpd_admin_notice' ) ) {
+            $message = sanitize_text_field( wp_unslash( $_GET['import_error'] ) );
             $message_type = 'error';
         }
 
-        if ( isset( $_GET['cleanup_done'] ) ) {
-            $deleted = absint( $_GET['deleted'] ?? 0 );
-            $updated = absint( $_GET['updated'] ?? 0 );
+        if ( isset( $_GET['cleanup_done'] ) && wp_verify_nonce( $tpd_nonce, 'tpd_admin_notice' ) ) {
+            $deleted = isset( $_GET['deleted'] ) ? absint( $_GET['deleted'] ) : 0;
+            $updated = isset( $_GET['updated'] ) ? absint( $_GET['updated'] ) : 0;
             $message = sprintf(
                 /* translators: %1$d: deleted count, %2$d: updated count */
                 __( 'Cleanup completed! %1$d single session packages removed, %2$d packages updated with base price.', 'treatpack' ),
@@ -326,7 +328,7 @@ class ImportExport {
             return;
         }
 
-        if ( ! isset( $_POST['tp_export_nonce'] ) || ! wp_verify_nonce( $_POST['tp_export_nonce'], 'tp_export_treatments' ) ) {
+        if ( ! isset( $_POST['tp_export_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['tp_export_nonce'] ) ), 'tp_export_treatments' ) ) {
             return;
         }
 
@@ -341,7 +343,7 @@ class ImportExport {
         $export_data = self::generate_export_data( $include_categories, $include_areas, $include_images );
 
         // Set headers for download
-        $filename = 'treatments-export-' . date( 'Y-m-d-His' ) . '.json';
+        $filename = 'treatments-export-' . gmdate( 'Y-m-d-His' ) . '.json';
 
         header( 'Content-Type: application/json; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -360,7 +362,7 @@ class ImportExport {
             return;
         }
 
-        if ( ! isset( $_POST['tp_csv_export_nonce'] ) || ! wp_verify_nonce( $_POST['tp_csv_export_nonce'], 'tp_csv_export_treatments' ) ) {
+        if ( ! isset( $_POST['tp_csv_export_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['tp_csv_export_nonce'] ) ), 'tp_csv_export_treatments' ) ) {
             return;
         }
 
@@ -368,7 +370,7 @@ class ImportExport {
             return;
         }
 
-        $export_type = isset( $_POST['csv_export_type'] ) ? sanitize_text_field( $_POST['csv_export_type'] ) : 'treatments';
+        $export_type = isset( $_POST['csv_export_type'] ) ? sanitize_text_field( wp_unslash( $_POST['csv_export_type'] ) ) : 'treatments';
 
         if ( $export_type === 'packages' ) {
             self::export_packages_csv();
@@ -381,7 +383,7 @@ class ImportExport {
      * Export treatments to CSV
      */
     private static function export_treatments_csv() {
-        $filename = 'treatments-export-' . date( 'Y-m-d-His' ) . '.csv';
+        $filename = 'treatments-export-' . gmdate( 'Y-m-d-His' ) . '.csv';
 
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -477,6 +479,7 @@ class ImportExport {
             ) );
         }
 
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- writing to php://output stream.
         fclose( $output );
         exit;
     }
@@ -485,7 +488,7 @@ class ImportExport {
      * Export packages to CSV
      */
     private static function export_packages_csv() {
-        $filename = 'packages-export-' . date( 'Y-m-d-His' ) . '.csv';
+        $filename = 'packages-export-' . gmdate( 'Y-m-d-His' ) . '.csv';
 
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -553,6 +556,7 @@ class ImportExport {
             }
         }
 
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- writing to php://output stream.
         fclose( $output );
         exit;
     }
@@ -698,7 +702,7 @@ class ImportExport {
             return;
         }
 
-        if ( ! isset( $_POST['tp_import_nonce'] ) || ! wp_verify_nonce( $_POST['tp_import_nonce'], 'tp_import_treatments' ) ) {
+        if ( ! isset( $_POST['tp_import_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['tp_import_nonce'] ) ), 'tp_import_treatments' ) ) {
             return;
         }
 
@@ -707,11 +711,12 @@ class ImportExport {
         }
 
         // Check file upload
-        if ( ! isset( $_FILES['tp_import_file'] ) || $_FILES['tp_import_file']['error'] !== UPLOAD_ERR_OK ) {
+        if ( ! isset( $_FILES['tp_import_file'] ) || ! isset( $_FILES['tp_import_file']['error'] ) || $_FILES['tp_import_file']['error'] !== UPLOAD_ERR_OK ) {
             self::redirect_with_error( __( 'File upload failed. Please try again.', 'treatpack' ) );
             return;
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- $_FILES array handled by wp_check_filetype and file_get_contents on tmp_name.
         $file = $_FILES['tp_import_file'];
 
         // Validate file type
@@ -752,11 +757,12 @@ class ImportExport {
         );
 
         // Redirect with success
-        wp_redirect( add_query_arg(
+        wp_safe_redirect( add_query_arg(
             array(
                 'post_type' => TreatmentPostType::POST_TYPE,
                 'page'      => 'tp-import-export',
                 'imported'  => $imported_count,
+                '_wpnonce'  => wp_create_nonce( 'tpd_admin_notice' ),
             ),
             admin_url( 'edit.php' )
         ) );
@@ -1030,11 +1036,12 @@ class ImportExport {
      * @param string $message Error message.
      */
     private static function redirect_with_error( $message ) {
-        wp_redirect( add_query_arg(
+        wp_safe_redirect( add_query_arg(
             array(
                 'post_type'    => TreatmentPostType::POST_TYPE,
                 'page'         => 'tp-import-export',
                 'import_error' => urlencode( $message ),
+                '_wpnonce'     => wp_create_nonce( 'tpd_admin_notice' ),
             ),
             admin_url( 'edit.php' )
         ) );
@@ -1049,6 +1056,7 @@ class ImportExport {
     private static function count_packages() {
         global $wpdb;
         $table = $wpdb->prefix . 'tp_packages';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix constant; used for admin display count only.
         return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
     }
 
@@ -1060,6 +1068,7 @@ class ImportExport {
     private static function count_single_session_packages() {
         global $wpdb;
         $table = $wpdb->prefix . 'tp_packages';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix constant; used for admin display count only.
         return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE sessions = 1" );
     }
 
@@ -1071,6 +1080,7 @@ class ImportExport {
     private static function count_zero_price_packages() {
         global $wpdb;
         $table = $wpdb->prefix . 'tp_packages';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is safe prefix constant; used for admin display count only.
         return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE total_price = 0 OR total_price IS NULL" );
     }
 
@@ -1082,7 +1092,7 @@ class ImportExport {
             return;
         }
 
-        if ( ! isset( $_POST['tp_cleanup_nonce'] ) || ! wp_verify_nonce( $_POST['tp_cleanup_nonce'], 'tp_cleanup_packages' ) ) {
+        if ( ! isset( $_POST['tp_cleanup_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['tp_cleanup_nonce'] ) ), 'tp_cleanup_packages' ) ) {
             return;
         }
 
@@ -1102,7 +1112,9 @@ class ImportExport {
         // Fix zero price packages first (before deleting single sessions)
         if ( $fix_zero ) {
             // Get all packages with zero price
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Cleanup operation; caching not applicable.
             $zero_packages = $wpdb->get_results(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table names are safe prefix constants.
                 "SELECT p.*, pm.meta_value as base_price
                 FROM {$table} p
                 LEFT JOIN {$wpdb->postmeta} pm ON p.treatment_id = pm.post_id AND pm.meta_key = '_tp_base_price'
@@ -1115,6 +1127,7 @@ class ImportExport {
                     $new_total = $base_price * intval( $pkg->sessions );
                     $per_session = $base_price;
 
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Write operation; caching not applicable.
                     $result = $wpdb->update(
                         $table,
                         array(
@@ -1147,7 +1160,9 @@ class ImportExport {
         // Delete single session packages
         if ( $delete_single ) {
             // First get the WC product IDs to clean up
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Cleanup operation; caching not applicable.
             $single_packages = $wpdb->get_results(
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe prefix constant.
                 "SELECT id, wc_product_id FROM {$table} WHERE sessions = 1"
             );
 
@@ -1162,6 +1177,7 @@ class ImportExport {
             }
 
             // Delete all single session packages
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Delete operation; table name is safe prefix constant.
             $deleted = $wpdb->query( "DELETE FROM {$table} WHERE sessions = 1" );
             if ( $deleted === false ) {
                 $deleted = 0;
@@ -1169,13 +1185,14 @@ class ImportExport {
         }
 
         // Redirect with success
-        wp_redirect( add_query_arg(
+        wp_safe_redirect( add_query_arg(
             array(
                 'post_type'    => TreatmentPostType::POST_TYPE,
                 'page'         => 'tp-import-export',
                 'cleanup_done' => 1,
                 'deleted'      => $deleted,
                 'updated'      => $updated,
+                '_wpnonce'     => wp_create_nonce( 'tpd_admin_notice' ),
             ),
             admin_url( 'edit.php' )
         ) );

@@ -53,14 +53,14 @@ spl_autoload_register( function ( $class ) {
  *
  * @return bool
  */
-function tp_deposits_is_woocommerce_active() {
+function tpd_is_woocommerce_active() {
     return class_exists( 'WooCommerce' );
 }
 
 /**
  * Display admin notice if WooCommerce is not active
  */
-function tp_deposits_woocommerce_missing_notice() {
+function tpd_woocommerce_missing_notice() {
     ?>
     <div class="notice notice-error">
         <p>
@@ -80,13 +80,14 @@ function tp_deposits_woocommerce_missing_notice() {
 /**
  * Initialize the plugin
  */
-function tp_deposits_init() {
-    if ( ! tp_deposits_is_woocommerce_active() ) {
-        add_action( 'admin_notices', 'tp_deposits_woocommerce_missing_notice' );
+function tpd_init() {
+    if ( ! tpd_is_woocommerce_active() ) {
+        add_action( 'admin_notices', 'tpd_woocommerce_missing_notice' );
         return;
     }
 
-    // Load text domain
+    // Load text domain.
+    // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for custom language directory support.
     load_plugin_textdomain(
         'treatpack',
         false,
@@ -96,13 +97,13 @@ function tp_deposits_init() {
     // Initialize the plugin
     \TreatmentPackages\Plugin::instance();
 }
-add_action( 'plugins_loaded', 'tp_deposits_init' );
+add_action( 'plugins_loaded', 'tpd_init' );
 
 /**
  * Plugin activation hook
  */
-function tp_deposits_activate() {
-    if ( ! tp_deposits_is_woocommerce_active() ) {
+function tpd_activate() {
+    if ( ! tpd_is_woocommerce_active() ) {
         deactivate_plugins( TP_DEPOSITS_PLUGIN_BASENAME );
         wp_die(
             esc_html__( 'TreatPack requires WooCommerce to be installed and active.', 'treatpack' ),
@@ -118,15 +119,15 @@ function tp_deposits_activate() {
     // Flush rewrite rules for custom post types
     flush_rewrite_rules();
 }
-register_activation_hook( __FILE__, 'tp_deposits_activate' );
+register_activation_hook( __FILE__, 'tpd_activate' );
 
 /**
  * Plugin deactivation hook
  */
-function tp_deposits_deactivate() {
+function tpd_deactivate() {
     flush_rewrite_rules();
 }
-register_deactivation_hook( __FILE__, 'tp_deposits_deactivate' );
+register_deactivation_hook( __FILE__, 'tpd_deactivate' );
 
 /**
  * Declare HPOS compatibility for WooCommerce

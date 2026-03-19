@@ -20,9 +20,9 @@ global $wpdb;
  * You can set this option to 'no' in wp_options to preserve data on uninstall.
  * Default is 'yes' - delete all data.
  */
-$delete_data = get_option( 'tp_deposits_delete_data_on_uninstall', 'yes' );
+$tpd_delete_data = get_option( 'tp_deposits_delete_data_on_uninstall', 'yes' );
 
-if ( 'yes' !== $delete_data ) {
+if ( 'yes' !== $tpd_delete_data ) {
     return;
 }
 
@@ -30,13 +30,14 @@ if ( 'yes' !== $delete_data ) {
 // 1. Delete Custom Database Tables
 // =============================================================================
 
-$tables = array(
+$tpd_tables = array(
     $wpdb->prefix . 'tp_packages',
     $wpdb->prefix . 'tp_customer_packages',
 );
 
-foreach ( $tables as $table ) {
-    $wpdb->query( "DROP TABLE IF EXISTS {$table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+foreach ( $tpd_tables as $tpd_table ) {
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+    $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS `%1s`', $tpd_table ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 }
 
 // =============================================================================
@@ -44,13 +45,17 @@ foreach ( $tables as $table ) {
 // =============================================================================
 
 // Find all products that were synced from treatment packages
-$synced_products = $wpdb->get_col(
-    "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_tp_package_id'"
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+$tpd_synced_products = $wpdb->get_col(
+    $wpdb->prepare(
+        "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s",
+        '_tp_package_id'
+    )
 );
 
-if ( ! empty( $synced_products ) ) {
-    foreach ( $synced_products as $product_id ) {
-        wp_delete_post( $product_id, true );
+if ( ! empty( $tpd_synced_products ) ) {
+    foreach ( $tpd_synced_products as $tpd_product_id ) {
+        wp_delete_post( $tpd_product_id, true );
     }
 }
 
@@ -59,7 +64,7 @@ if ( ! empty( $synced_products ) ) {
 // =============================================================================
 
 // Get all treatment posts
-$treatments = get_posts(
+$tpd_treatments = get_posts(
     array(
         'post_type'      => 'treatment',
         'post_status'    => 'any',
@@ -68,9 +73,9 @@ $treatments = get_posts(
     )
 );
 
-if ( ! empty( $treatments ) ) {
-    foreach ( $treatments as $treatment_id ) {
-        wp_delete_post( $treatment_id, true );
+if ( ! empty( $tpd_treatments ) ) {
+    foreach ( $tpd_treatments as $tpd_treatment_id ) {
+        wp_delete_post( $tpd_treatment_id, true );
     }
 }
 
@@ -78,20 +83,20 @@ if ( ! empty( $treatments ) ) {
 // 4. Delete Custom Taxonomies Terms
 // =============================================================================
 
-$taxonomies = array( 'treatment_category', 'treatment_area' );
+$tpd_taxonomies = array( 'treatment_category', 'treatment_area' );
 
-foreach ( $taxonomies as $taxonomy ) {
-    $terms = get_terms(
+foreach ( $tpd_taxonomies as $tpd_taxonomy ) {
+    $tpd_terms = get_terms(
         array(
-            'taxonomy'   => $taxonomy,
+            'taxonomy'   => $tpd_taxonomy,
             'hide_empty' => false,
             'fields'     => 'ids',
         )
     );
 
-    if ( ! is_wp_error( $terms ) && ! empty( $terms ) ) {
-        foreach ( $terms as $term_id ) {
-            wp_delete_term( $term_id, $taxonomy );
+    if ( ! is_wp_error( $tpd_terms ) && ! empty( $tpd_terms ) ) {
+        foreach ( $tpd_terms as $tpd_term_id ) {
+            wp_delete_term( $tpd_term_id, $tpd_taxonomy );
         }
     }
 }
@@ -100,22 +105,22 @@ foreach ( $taxonomies as $taxonomy ) {
 // 5. Delete Plugin Options
 // =============================================================================
 
-$options = array(
+$tpd_options = array(
     'tp_deposits_version',
     'tp_deposits_db_version',
     'tp_deposits_delete_data_on_uninstall',
     'tp_deposits_settings',
 );
 
-foreach ( $options as $option ) {
-    delete_option( $option );
+foreach ( $tpd_options as $tpd_option ) {
+    delete_option( $tpd_option );
 }
 
 // =============================================================================
 // 6. Delete Post Meta Related to Plugin
 // =============================================================================
 
-$meta_keys = array(
+$tpd_meta_keys = array(
     '_tp_package_id',
     '_tp_treatment_id',
     '_tp_deposit_type',
@@ -134,21 +139,23 @@ $meta_keys = array(
     '_treatment_default_deposit_value',
 );
 
-foreach ( $meta_keys as $meta_key ) {
+foreach ( $tpd_meta_keys as $tpd_meta_key ) {
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query(
         $wpdb->prepare(
             "DELETE FROM {$wpdb->postmeta} WHERE meta_key = %s",
-            $meta_key
+            $tpd_meta_key
         )
     );
 }
 
 // Delete from order item meta as well
-foreach ( $meta_keys as $meta_key ) {
+foreach ( $tpd_meta_keys as $tpd_meta_key ) {
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query(
         $wpdb->prepare(
             "DELETE FROM {$wpdb->prefix}woocommerce_order_itemmeta WHERE meta_key = %s",
-            $meta_key
+            $tpd_meta_key
         )
     );
 }
@@ -157,15 +164,16 @@ foreach ( $meta_keys as $meta_key ) {
 // 7. Delete User Meta Related to Plugin
 // =============================================================================
 
-$user_meta_keys = array(
+$tpd_user_meta_keys = array(
     'tp_customer_packages',
 );
 
-foreach ( $user_meta_keys as $meta_key ) {
+foreach ( $tpd_user_meta_keys as $tpd_meta_key ) {
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $wpdb->query(
         $wpdb->prepare(
             "DELETE FROM {$wpdb->usermeta} WHERE meta_key = %s",
-            $meta_key
+            $tpd_meta_key
         )
     );
 }
@@ -174,12 +182,20 @@ foreach ( $user_meta_keys as $meta_key ) {
 // 8. Clear Any Transients
 // =============================================================================
 
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->query(
-    "DELETE FROM {$wpdb->options} WHERE option_name LIKE '%_transient_tp_deposits_%'"
+    $wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+        '%_transient_tp_deposits_%'
+    )
 );
 
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->query(
-    "DELETE FROM {$wpdb->options} WHERE option_name LIKE '%_transient_timeout_tp_deposits_%'"
+    $wpdb->prepare(
+        "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+        '%_transient_timeout_tp_deposits_%'
+    )
 );
 
 // =============================================================================
