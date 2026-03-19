@@ -50,7 +50,7 @@ class Shortcodes {
             'columns'        => 3,
             'show_sidebar'   => 'yes',
             'show_intro'     => 'yes',
-            'intro_text'     => __( 'To purchase a treatment package, select the number of sessions and click to add it to the shopping basket.', 'treatment-packages-deposits' ),
+            'intro_text'     => __( 'To purchase a treatment package, select the number of sessions and click to add it to the shopping basket.', 'treatpack' ),
             'orderby'        => 'menu_order',
             'order'          => 'ASC',
         ), $atts, 'treatment_packages' );
@@ -157,7 +157,7 @@ class Shortcodes {
                         <?php endforeach; ?>
                     <?php else : ?>
                         <p class="tp-no-treatments">
-                            <?php esc_html_e( 'No treatments found.', 'treatment-packages-deposits' ); ?>
+                            <?php esc_html_e( 'No treatments found.', 'treatpack' ); ?>
                         </p>
                     <?php endif; ?>
                 </div>
@@ -359,7 +359,7 @@ class Shortcodes {
                     <?php
                     printf(
                         /* translators: %s: discount percentage */
-                        esc_html__( 'UP TO %s%% OFF', 'treatment-packages-deposits' ),
+                        esc_html__( 'UP TO %s%% OFF', 'treatpack' ),
                         number_format( $max_discount, 0 )
                     );
                     ?>
@@ -369,14 +369,14 @@ class Shortcodes {
             <h3 class="tp-package-title"><?php echo esc_html( $treatment->post_title ); ?></h3>
 
             <div class="tp-package-price">
-                <span class="price-from"><?php esc_html_e( 'From only', 'treatment-packages-deposits' ); ?></span>
+                <span class="price-from"><?php esc_html_e( 'From only', 'treatpack' ); ?></span>
                 <span class="price-amount"><?php echo esc_html( $currency_symbol . number_format( $min_price, 2 ) ); ?></span>
-                <span class="price-per"><?php esc_html_e( 'per session', 'treatment-packages-deposits' ); ?></span>
+                <span class="price-per"><?php esc_html_e( 'per session', 'treatpack' ); ?></span>
             </div>
 
             <div class="tp-session-dropdown">
                 <button type="button" class="tp-dropdown-toggle">
-                    <span><?php esc_html_e( 'SELECT AND SAVE', 'treatment-packages-deposits' ); ?></span>
+                    <span><?php esc_html_e( 'SELECT AND SAVE', 'treatpack' ); ?></span>
                     <span class="dropdown-arrow dashicons dashicons-arrow-down-alt2"></span>
                 </button>
 
@@ -428,9 +428,9 @@ class Shortcodes {
                 </div>
                 <?php if ( $package->get_sessions() > 1 ) : ?>
                     <div class="tp-option-per-session">
-                        <?php esc_html_e( 'Only', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'Only', 'treatpack' ); ?>
                         <span class="amount"><?php echo esc_html( number_format( $package->get_per_session_price(), 2 ) ); ?></span>
-                        <?php esc_html_e( 'per session', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'per session', 'treatpack' ); ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -461,7 +461,7 @@ class Shortcodes {
         } else {
             ?>
             <p class="tp-no-treatments">
-                <?php esc_html_e( 'No treatments found in this category.', 'treatment-packages-deposits' ); ?>
+                <?php esc_html_e( 'No treatments found in this category.', 'treatpack' ); ?>
             </p>
             <?php
         }

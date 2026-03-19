@@ -101,7 +101,7 @@ class ProductsSync {
 
         // Get treatment details
         $treatment = $package->get_treatment();
-        $treatment_title = $treatment ? $treatment->post_title : __( 'Treatment', 'treatment-packages-deposits' );
+        $treatment_title = $treatment ? $treatment->post_title : __( 'Treatment', 'treatpack' );
 
         // Build product name
         $product_name = sprintf(
@@ -125,7 +125,7 @@ class ProductsSync {
         // Set description
         $description = sprintf(
             /* translators: 1: treatment name, 2: number of sessions, 3: price per session */
-            __( '%1$s treatment package with %2$d session(s). Price per session: %3$s', 'treatment-packages-deposits' ),
+            __( '%1$s treatment package with %2$d session(s). Price per session: %3$s', 'treatpack' ),
             $treatment_title,
             $package->get_sessions(),
             $package->get_formatted_per_session_price()

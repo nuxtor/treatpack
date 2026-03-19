@@ -179,7 +179,7 @@ class OrderHandler {
      */
     public static function add_admin_order_item_header() {
         ?>
-        <th class="tp-sessions-column"><?php esc_html_e( 'Sessions', 'treatment-packages-deposits' ); ?></th>
+        <th class="tp-sessions-column"><?php esc_html_e( 'Sessions', 'treatpack' ); ?></th>
         <?php
     }
 
@@ -200,7 +200,7 @@ class OrderHandler {
                 <?php if ( $customer_package_id ) : ?>
                     <br>
                     <a href="<?php echo esc_url( admin_url( 'admin.php?page=tp-customer-packages&id=' . $customer_package_id ) ); ?>" class="button button-small">
-                        <?php esc_html_e( 'View Package', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'View Package', 'treatpack' ); ?>
                     </a>
                 <?php endif; ?>
             <?php else : ?>
@@ -233,29 +233,29 @@ class OrderHandler {
 
         ?>
         <div class="tp-order-deposit-summary">
-            <h3><?php esc_html_e( 'Your Treatment Packages', 'treatment-packages-deposits' ); ?></h3>
+            <h3><?php esc_html_e( 'Your Treatment Packages', 'treatpack' ); ?></h3>
 
             <?php foreach ( $customer_packages as $package ) : ?>
                 <div class="tp-package-summary-item" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2);">
                     <strong style="font-size: 1.1em;"><?php echo esc_html( $package->package_name ); ?></strong>
 
                     <div class="deposit-row" style="margin-top: 10px;">
-                        <span><?php esc_html_e( 'Sessions Purchased:', 'treatment-packages-deposits' ); ?></span>
+                        <span><?php esc_html_e( 'Sessions Purchased:', 'treatpack' ); ?></span>
                         <span><?php echo esc_html( $package->sessions_purchased ); ?></span>
                     </div>
 
                     <?php if ( $package->remaining_balance > 0 ) : ?>
                         <div class="deposit-row">
-                            <span><?php esc_html_e( 'Deposit Paid:', 'treatment-packages-deposits' ); ?></span>
+                            <span><?php esc_html_e( 'Deposit Paid:', 'treatpack' ); ?></span>
                             <span><?php echo wc_price( $package->deposit_paid ); ?></span>
                         </div>
                         <div class="deposit-row">
-                            <span><?php esc_html_e( 'Balance Due:', 'treatment-packages-deposits' ); ?></span>
+                            <span><?php esc_html_e( 'Balance Due:', 'treatpack' ); ?></span>
                             <span><?php echo wc_price( $package->remaining_balance ); ?></span>
                         </div>
                     <?php else : ?>
                         <div class="deposit-row">
-                            <span><?php esc_html_e( 'Amount Paid:', 'treatment-packages-deposits' ); ?></span>
+                            <span><?php esc_html_e( 'Amount Paid:', 'treatpack' ); ?></span>
                             <span><?php echo wc_price( $package->total_price ); ?></span>
                         </div>
                     <?php endif; ?>
@@ -263,7 +263,7 @@ class OrderHandler {
             <?php endforeach; ?>
 
             <p style="font-size: 0.9em; opacity: 0.9; margin-top: 15px;">
-                <?php esc_html_e( 'You can view and manage your treatment packages in your account dashboard.', 'treatment-packages-deposits' ); ?>
+                <?php esc_html_e( 'You can view and manage your treatment packages in your account dashboard.', 'treatpack' ); ?>
             </p>
         </div>
         <?php
@@ -282,16 +282,16 @@ class OrderHandler {
         }
 
         ?>
-        <h2><?php esc_html_e( 'Treatment Package Details', 'treatment-packages-deposits' ); ?></h2>
+        <h2><?php esc_html_e( 'Treatment Package Details', 'treatpack' ); ?></h2>
 
         <table class="woocommerce-table woocommerce-table--order-details tp-packages-table-customer">
             <thead>
                 <tr>
-                    <th><?php esc_html_e( 'Package', 'treatment-packages-deposits' ); ?></th>
-                    <th><?php esc_html_e( 'Sessions', 'treatment-packages-deposits' ); ?></th>
-                    <th><?php esc_html_e( 'Status', 'treatment-packages-deposits' ); ?></th>
+                    <th><?php esc_html_e( 'Package', 'treatpack' ); ?></th>
+                    <th><?php esc_html_e( 'Sessions', 'treatpack' ); ?></th>
+                    <th><?php esc_html_e( 'Status', 'treatpack' ); ?></th>
                     <?php if ( array_sum( array_column( $customer_packages, 'remaining_balance' ) ) > 0 ) : ?>
-                        <th><?php esc_html_e( 'Balance', 'treatment-packages-deposits' ); ?></th>
+                        <th><?php esc_html_e( 'Balance', 'treatpack' ); ?></th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -303,7 +303,7 @@ class OrderHandler {
                             <?php
                             printf(
                                 /* translators: 1: remaining sessions, 2: total sessions */
-                                esc_html__( '%1$d of %2$d remaining', 'treatment-packages-deposits' ),
+                                esc_html__( '%1$d of %2$d remaining', 'treatpack' ),
                                 $package->sessions_remaining,
                                 $package->sessions_purchased
                             );
@@ -319,7 +319,7 @@ class OrderHandler {
                                 <?php if ( $package->remaining_balance > 0 ) : ?>
                                     <?php echo wc_price( $package->remaining_balance ); ?>
                                 <?php else : ?>
-                                    <span class="tp-paid-in-full"><?php esc_html_e( 'Paid', 'treatment-packages-deposits' ); ?></span>
+                                    <span class="tp-paid-in-full"><?php esc_html_e( 'Paid', 'treatpack' ); ?></span>
                                 <?php endif; ?>
                             </td>
                         <?php endif; ?>
@@ -379,7 +379,7 @@ class OrderHandler {
 
         $note = sprintf(
             /* translators: 1: package name, 2: number of sessions, 3: customer package ID */
-            __( 'Treatment package created: %1$s (%2$d sessions). Package ID: #%3$d', 'treatment-packages-deposits' ),
+            __( 'Treatment package created: %1$s (%2$d sessions). Package ID: #%3$d', 'treatpack' ),
             $data['package_name'],
             $data['sessions_purchased'],
             $customer_package_id
@@ -388,7 +388,7 @@ class OrderHandler {
         if ( $data['remaining_balance'] > 0 ) {
             $note .= sprintf(
                 /* translators: 1: deposit amount, 2: remaining balance */
-                __( '. Deposit: %1$s, Balance due: %2$s', 'treatment-packages-deposits' ),
+                __( '. Deposit: %1$s, Balance due: %2$s', 'treatpack' ),
                 wc_price( $data['deposit_paid'] ),
                 wc_price( $data['remaining_balance'] )
             );

@@ -41,30 +41,30 @@ class TreatmentPostType {
      */
     public static function register_post_type() {
         $labels = array(
-            'name'                  => _x( 'Treatments', 'Post type general name', 'treatment-packages-deposits' ),
-            'singular_name'         => _x( 'Treatment', 'Post type singular name', 'treatment-packages-deposits' ),
-            'menu_name'             => _x( 'Treatments', 'Admin Menu text', 'treatment-packages-deposits' ),
-            'name_admin_bar'        => _x( 'Treatment', 'Add New on Toolbar', 'treatment-packages-deposits' ),
-            'add_new'               => __( 'Add New', 'treatment-packages-deposits' ),
-            'add_new_item'          => __( 'Add New Treatment', 'treatment-packages-deposits' ),
-            'new_item'              => __( 'New Treatment', 'treatment-packages-deposits' ),
-            'edit_item'             => __( 'Edit Treatment', 'treatment-packages-deposits' ),
-            'view_item'             => __( 'View Treatment', 'treatment-packages-deposits' ),
-            'all_items'             => __( 'All Treatments', 'treatment-packages-deposits' ),
-            'search_items'          => __( 'Search Treatments', 'treatment-packages-deposits' ),
-            'parent_item_colon'     => __( 'Parent Treatments:', 'treatment-packages-deposits' ),
-            'not_found'             => __( 'No treatments found.', 'treatment-packages-deposits' ),
-            'not_found_in_trash'    => __( 'No treatments found in Trash.', 'treatment-packages-deposits' ),
-            'featured_image'        => _x( 'Treatment Image', 'Overrides the "Featured Image" phrase', 'treatment-packages-deposits' ),
-            'set_featured_image'    => _x( 'Set treatment image', 'Overrides the "Set featured image" phrase', 'treatment-packages-deposits' ),
-            'remove_featured_image' => _x( 'Remove treatment image', 'Overrides the "Remove featured image" phrase', 'treatment-packages-deposits' ),
-            'use_featured_image'    => _x( 'Use as treatment image', 'Overrides the "Use as featured image" phrase', 'treatment-packages-deposits' ),
-            'archives'              => _x( 'Treatment archives', 'The post type archive label', 'treatment-packages-deposits' ),
-            'insert_into_item'      => _x( 'Insert into treatment', 'Overrides the "Insert into post" phrase', 'treatment-packages-deposits' ),
-            'uploaded_to_this_item' => _x( 'Uploaded to this treatment', 'Overrides the "Uploaded to this post" phrase', 'treatment-packages-deposits' ),
-            'filter_items_list'     => _x( 'Filter treatments list', 'Screen reader text', 'treatment-packages-deposits' ),
-            'items_list_navigation' => _x( 'Treatments list navigation', 'Screen reader text', 'treatment-packages-deposits' ),
-            'items_list'            => _x( 'Treatments list', 'Screen reader text', 'treatment-packages-deposits' ),
+            'name'                  => _x( 'Treatments', 'Post type general name', 'treatpack' ),
+            'singular_name'         => _x( 'Treatment', 'Post type singular name', 'treatpack' ),
+            'menu_name'             => _x( 'Treatments', 'Admin Menu text', 'treatpack' ),
+            'name_admin_bar'        => _x( 'Treatment', 'Add New on Toolbar', 'treatpack' ),
+            'add_new'               => __( 'Add New', 'treatpack' ),
+            'add_new_item'          => __( 'Add New Treatment', 'treatpack' ),
+            'new_item'              => __( 'New Treatment', 'treatpack' ),
+            'edit_item'             => __( 'Edit Treatment', 'treatpack' ),
+            'view_item'             => __( 'View Treatment', 'treatpack' ),
+            'all_items'             => __( 'All Treatments', 'treatpack' ),
+            'search_items'          => __( 'Search Treatments', 'treatpack' ),
+            'parent_item_colon'     => __( 'Parent Treatments:', 'treatpack' ),
+            'not_found'             => __( 'No treatments found.', 'treatpack' ),
+            'not_found_in_trash'    => __( 'No treatments found in Trash.', 'treatpack' ),
+            'featured_image'        => _x( 'Treatment Image', 'Overrides the "Featured Image" phrase', 'treatpack' ),
+            'set_featured_image'    => _x( 'Set treatment image', 'Overrides the "Set featured image" phrase', 'treatpack' ),
+            'remove_featured_image' => _x( 'Remove treatment image', 'Overrides the "Remove featured image" phrase', 'treatpack' ),
+            'use_featured_image'    => _x( 'Use as treatment image', 'Overrides the "Use as featured image" phrase', 'treatpack' ),
+            'archives'              => _x( 'Treatment archives', 'The post type archive label', 'treatpack' ),
+            'insert_into_item'      => _x( 'Insert into treatment', 'Overrides the "Insert into post" phrase', 'treatpack' ),
+            'uploaded_to_this_item' => _x( 'Uploaded to this treatment', 'Overrides the "Uploaded to this post" phrase', 'treatpack' ),
+            'filter_items_list'     => _x( 'Filter treatments list', 'Screen reader text', 'treatpack' ),
+            'items_list_navigation' => _x( 'Treatments list navigation', 'Screen reader text', 'treatpack' ),
+            'items_list'            => _x( 'Treatments list', 'Screen reader text', 'treatpack' ),
         );
 
         $args = array(
@@ -93,7 +93,7 @@ class TreatmentPostType {
     public static function add_meta_boxes() {
         add_meta_box(
             'tp_treatment_settings',
-            __( 'Treatment Settings', 'treatment-packages-deposits' ),
+            __( 'Treatment Settings', 'treatpack' ),
             array( __CLASS__, 'render_settings_meta_box' ),
             self::POST_TYPE,
             'side',
@@ -118,7 +118,7 @@ class TreatmentPostType {
         <div class="tp-meta-box">
             <p>
                 <label for="tp_base_price">
-                    <strong><?php esc_html_e( 'Base Price (Single Session)', 'treatment-packages-deposits' ); ?></strong>
+                    <strong><?php esc_html_e( 'Base Price (Single Session)', 'treatpack' ); ?></strong>
                 </label>
                 <br>
                 <input
@@ -132,7 +132,7 @@ class TreatmentPostType {
                     placeholder="0.00"
                 >
                 <span class="description">
-                    <?php esc_html_e( 'Used to calculate discount percentages.', 'treatment-packages-deposits' ); ?>
+                    <?php esc_html_e( 'Used to calculate discount percentages.', 'treatpack' ); ?>
                 </span>
             </p>
 
@@ -140,25 +140,25 @@ class TreatmentPostType {
 
             <p>
                 <label for="tp_default_deposit_type">
-                    <strong><?php esc_html_e( 'Default Deposit Type', 'treatment-packages-deposits' ); ?></strong>
+                    <strong><?php esc_html_e( 'Default Deposit Type', 'treatpack' ); ?></strong>
                 </label>
                 <br>
                 <select id="tp_default_deposit_type" name="tp_default_deposit_type" style="width: 100%;">
                     <option value="none" <?php selected( $default_deposit_type, 'none' ); ?>>
-                        <?php esc_html_e( 'No Deposit (Full Payment)', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'No Deposit (Full Payment)', 'treatpack' ); ?>
                     </option>
                     <option value="fixed" <?php selected( $default_deposit_type, 'fixed' ); ?>>
-                        <?php esc_html_e( 'Fixed Amount', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'Fixed Amount', 'treatpack' ); ?>
                     </option>
                     <option value="percentage" <?php selected( $default_deposit_type, 'percentage' ); ?>>
-                        <?php esc_html_e( 'Percentage', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'Percentage', 'treatpack' ); ?>
                     </option>
                 </select>
             </p>
 
             <p>
                 <label for="tp_default_deposit_value">
-                    <strong><?php esc_html_e( 'Default Deposit Value', 'treatment-packages-deposits' ); ?></strong>
+                    <strong><?php esc_html_e( 'Default Deposit Value', 'treatpack' ); ?></strong>
                 </label>
                 <br>
                 <input
@@ -172,7 +172,7 @@ class TreatmentPostType {
                     placeholder="0.00"
                 >
                 <span class="description">
-                    <?php esc_html_e( 'Default deposit for new packages.', 'treatment-packages-deposits' ); ?>
+                    <?php esc_html_e( 'Default deposit for new packages.', 'treatpack' ); ?>
                 </span>
             </p>
         </div>
@@ -237,9 +237,9 @@ class TreatmentPostType {
 
             // Add columns after title
             if ( 'title' === $key ) {
-                $new_columns['tp_category']  = __( 'Category', 'treatment-packages-deposits' );
-                $new_columns['tp_packages']  = __( 'Packages', 'treatment-packages-deposits' );
-                $new_columns['tp_base_price'] = __( 'Base Price', 'treatment-packages-deposits' );
+                $new_columns['tp_category']  = __( 'Category', 'treatpack' );
+                $new_columns['tp_packages']  = __( 'Packages', 'treatpack' );
+                $new_columns['tp_base_price'] = __( 'Base Price', 'treatpack' );
             }
         }
 

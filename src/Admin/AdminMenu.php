@@ -39,8 +39,8 @@ class AdminMenu {
         // Add submenu under Treatments
         add_submenu_page(
             'edit.php?post_type=' . TreatmentPostType::POST_TYPE,
-            __( 'Customer Packages', 'treatment-packages-deposits' ),
-            __( 'Customer Packages', 'treatment-packages-deposits' ),
+            __( 'Customer Packages', 'treatpack' ),
+            __( 'Customer Packages', 'treatpack' ),
             'manage_woocommerce',
             'tp-customer-packages',
             array( __CLASS__, 'render_customer_packages_page' )
@@ -79,11 +79,11 @@ class AdminMenu {
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
                 'nonce'   => wp_create_nonce( 'tp_admin_customer' ),
                 'i18n'    => array(
-                    'confirmUseSession'  => __( 'Mark one session as used?', 'treatment-packages-deposits' ),
-                    'confirmCancel'      => __( 'Are you sure you want to cancel this package?', 'treatment-packages-deposits' ),
-                    'enterPaymentAmount' => __( 'Enter payment amount:', 'treatment-packages-deposits' ),
-                    'success'            => __( 'Updated successfully!', 'treatment-packages-deposits' ),
-                    'error'              => __( 'An error occurred. Please try again.', 'treatment-packages-deposits' ),
+                    'confirmUseSession'  => __( 'Mark one session as used?', 'treatpack' ),
+                    'confirmCancel'      => __( 'Are you sure you want to cancel this package?', 'treatpack' ),
+                    'enterPaymentAmount' => __( 'Enter payment amount:', 'treatpack' ),
+                    'success'            => __( 'Updated successfully!', 'treatpack' ),
+                    'error'              => __( 'An error occurred. Please try again.', 'treatpack' ),
                 ),
             )
         );
@@ -122,7 +122,7 @@ class AdminMenu {
         ?>
         <div class="wrap tp-customer-packages-wrap">
             <h1 class="wp-heading-inline">
-                <?php esc_html_e( 'Customer Packages', 'treatment-packages-deposits' ); ?>
+                <?php esc_html_e( 'Customer Packages', 'treatpack' ); ?>
             </h1>
             <hr class="wp-header-end">
 
@@ -130,19 +130,19 @@ class AdminMenu {
             <div class="tp-stats-cards">
                 <div class="tp-stat-card">
                     <span class="tp-stat-number"><?php echo esc_html( $stats['total_active'] ); ?></span>
-                    <span class="tp-stat-label"><?php esc_html_e( 'Active Packages', 'treatment-packages-deposits' ); ?></span>
+                    <span class="tp-stat-label"><?php esc_html_e( 'Active Packages', 'treatpack' ); ?></span>
                 </div>
                 <div class="tp-stat-card">
                     <span class="tp-stat-number"><?php echo esc_html( $stats['total_sessions'] ); ?></span>
-                    <span class="tp-stat-label"><?php esc_html_e( 'Sessions Remaining', 'treatment-packages-deposits' ); ?></span>
+                    <span class="tp-stat-label"><?php esc_html_e( 'Sessions Remaining', 'treatpack' ); ?></span>
                 </div>
                 <div class="tp-stat-card">
                     <span class="tp-stat-number"><?php echo wc_price( $stats['total_balance'] ); ?></span>
-                    <span class="tp-stat-label"><?php esc_html_e( 'Outstanding Balance', 'treatment-packages-deposits' ); ?></span>
+                    <span class="tp-stat-label"><?php esc_html_e( 'Outstanding Balance', 'treatpack' ); ?></span>
                 </div>
                 <div class="tp-stat-card">
                     <span class="tp-stat-number"><?php echo esc_html( $stats['total_completed'] ); ?></span>
-                    <span class="tp-stat-label"><?php esc_html_e( 'Completed', 'treatment-packages-deposits' ); ?></span>
+                    <span class="tp-stat-label"><?php esc_html_e( 'Completed', 'treatpack' ); ?></span>
                 </div>
             </div>
 
@@ -153,10 +153,10 @@ class AdminMenu {
                     <input type="hidden" name="page" value="tp-customer-packages">
 
                     <select name="status">
-                        <option value=""><?php esc_html_e( 'All Statuses', 'treatment-packages-deposits' ); ?></option>
-                        <option value="active" <?php selected( $status_filter, 'active' ); ?>><?php esc_html_e( 'Active', 'treatment-packages-deposits' ); ?></option>
-                        <option value="completed" <?php selected( $status_filter, 'completed' ); ?>><?php esc_html_e( 'Completed', 'treatment-packages-deposits' ); ?></option>
-                        <option value="cancelled" <?php selected( $status_filter, 'cancelled' ); ?>><?php esc_html_e( 'Cancelled', 'treatment-packages-deposits' ); ?></option>
+                        <option value=""><?php esc_html_e( 'All Statuses', 'treatpack' ); ?></option>
+                        <option value="active" <?php selected( $status_filter, 'active' ); ?>><?php esc_html_e( 'Active', 'treatpack' ); ?></option>
+                        <option value="completed" <?php selected( $status_filter, 'completed' ); ?>><?php esc_html_e( 'Completed', 'treatpack' ); ?></option>
+                        <option value="cancelled" <?php selected( $status_filter, 'cancelled' ); ?>><?php esc_html_e( 'Cancelled', 'treatpack' ); ?></option>
                     </select>
 
                     <?php
@@ -169,7 +169,7 @@ class AdminMenu {
                     ) );
                     ?>
                     <select name="user_id">
-                        <option value=""><?php esc_html_e( 'All Customers', 'treatment-packages-deposits' ); ?></option>
+                        <option value=""><?php esc_html_e( 'All Customers', 'treatpack' ); ?></option>
                         <?php foreach ( $users as $user ) : ?>
                             <option value="<?php echo esc_attr( $user->ID ); ?>" <?php selected( $user_filter, $user->ID ); ?>>
                                 <?php echo esc_html( $user->display_name . ' (' . $user->user_email . ')' ); ?>
@@ -177,13 +177,13 @@ class AdminMenu {
                         <?php endforeach; ?>
                     </select>
 
-                    <input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search packages...', 'treatment-packages-deposits' ); ?>">
+                    <input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search packages...', 'treatpack' ); ?>">
 
-                    <button type="submit" class="button"><?php esc_html_e( 'Filter', 'treatment-packages-deposits' ); ?></button>
+                    <button type="submit" class="button"><?php esc_html_e( 'Filter', 'treatpack' ); ?></button>
 
                     <?php if ( $status_filter || $user_filter || $search ) : ?>
                         <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . TreatmentPostType::POST_TYPE . '&page=tp-customer-packages' ) ); ?>" class="button">
-                            <?php esc_html_e( 'Clear', 'treatment-packages-deposits' ); ?>
+                            <?php esc_html_e( 'Clear', 'treatpack' ); ?>
                         </a>
                     <?php endif; ?>
                 </form>
@@ -193,15 +193,15 @@ class AdminMenu {
             <table class="wp-list-table widefat fixed striped tp-packages-table">
                 <thead>
                     <tr>
-                        <th class="column-id"><?php esc_html_e( 'ID', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-customer"><?php esc_html_e( 'Customer', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-package"><?php esc_html_e( 'Package', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-sessions"><?php esc_html_e( 'Sessions', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-balance"><?php esc_html_e( 'Balance', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-status"><?php esc_html_e( 'Status', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-order"><?php esc_html_e( 'Order', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-date"><?php esc_html_e( 'Date', 'treatment-packages-deposits' ); ?></th>
-                        <th class="column-actions"><?php esc_html_e( 'Actions', 'treatment-packages-deposits' ); ?></th>
+                        <th class="column-id"><?php esc_html_e( 'ID', 'treatpack' ); ?></th>
+                        <th class="column-customer"><?php esc_html_e( 'Customer', 'treatpack' ); ?></th>
+                        <th class="column-package"><?php esc_html_e( 'Package', 'treatpack' ); ?></th>
+                        <th class="column-sessions"><?php esc_html_e( 'Sessions', 'treatpack' ); ?></th>
+                        <th class="column-balance"><?php esc_html_e( 'Balance', 'treatpack' ); ?></th>
+                        <th class="column-status"><?php esc_html_e( 'Status', 'treatpack' ); ?></th>
+                        <th class="column-order"><?php esc_html_e( 'Order', 'treatpack' ); ?></th>
+                        <th class="column-date"><?php esc_html_e( 'Date', 'treatpack' ); ?></th>
+                        <th class="column-actions"><?php esc_html_e( 'Actions', 'treatpack' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -212,7 +212,7 @@ class AdminMenu {
                     <?php else : ?>
                         <tr>
                             <td colspan="9" class="tp-no-packages">
-                                <?php esc_html_e( 'No customer packages found.', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'No customer packages found.', 'treatpack' ); ?>
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -249,7 +249,7 @@ class AdminMenu {
                     <br>
                     <small><?php echo esc_html( $user->user_email ); ?></small>
                 <?php else : ?>
-                    <?php esc_html_e( 'Guest', 'treatment-packages-deposits' ); ?>
+                    <?php esc_html_e( 'Guest', 'treatpack' ); ?>
                 <?php endif; ?>
             </td>
             <td class="column-package">
@@ -263,7 +263,7 @@ class AdminMenu {
                 </span>
                 <?php if ( $package->sessions_remaining > 0 && 'active' === $package->status ) : ?>
                     <button type="button" class="button button-small tp-use-session-btn" data-id="<?php echo esc_attr( $package->id ); ?>">
-                        <?php esc_html_e( 'Use 1', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'Use 1', 'treatpack' ); ?>
                     </button>
                 <?php endif; ?>
             </td>
@@ -271,9 +271,9 @@ class AdminMenu {
                 <?php if ( $package->remaining_balance > 0 ) : ?>
                     <span class="tp-balance-due"><?php echo wc_price( $package->remaining_balance ); ?></span>
                     <br>
-                    <small><?php esc_html_e( 'of', 'treatment-packages-deposits' ); ?> <?php echo wc_price( $package->total_price ); ?></small>
+                    <small><?php esc_html_e( 'of', 'treatpack' ); ?> <?php echo wc_price( $package->total_price ); ?></small>
                 <?php else : ?>
-                    <span class="tp-paid-full"><?php esc_html_e( 'Paid in full', 'treatment-packages-deposits' ); ?></span>
+                    <span class="tp-paid-full"><?php esc_html_e( 'Paid in full', 'treatpack' ); ?></span>
                 <?php endif; ?>
             </td>
             <td class="column-status">
@@ -295,7 +295,7 @@ class AdminMenu {
             </td>
             <td class="column-actions">
                 <a href="<?php echo esc_url( $view_url ); ?>" class="button button-small">
-                    <?php esc_html_e( 'View', 'treatment-packages-deposits' ); ?>
+                    <?php esc_html_e( 'View', 'treatpack' ); ?>
                 </a>
             </td>
         </tr>
@@ -311,7 +311,7 @@ class AdminMenu {
         $package = CustomerPackagesRepository::find( $package_id );
 
         if ( ! $package ) {
-            wp_die( esc_html__( 'Package not found.', 'treatment-packages-deposits' ) );
+            wp_die( esc_html__( 'Package not found.', 'treatpack' ) );
         }
 
         $user = get_user_by( 'id', $package->user_id );
@@ -323,12 +323,12 @@ class AdminMenu {
         <div class="wrap tp-single-package-wrap">
             <h1 class="wp-heading-inline">
                 <a href="<?php echo esc_url( $back_url ); ?>" class="tp-back-link">
-                    &larr; <?php esc_html_e( 'Back to Packages', 'treatment-packages-deposits' ); ?>
+                    &larr; <?php esc_html_e( 'Back to Packages', 'treatpack' ); ?>
                 </a>
                 <?php
                 printf(
                     /* translators: %d: package ID */
-                    esc_html__( 'Package #%d', 'treatment-packages-deposits' ),
+                    esc_html__( 'Package #%d', 'treatpack' ),
                     $package->id
                 );
                 ?>
@@ -346,13 +346,13 @@ class AdminMenu {
                     <div class="tp-sessions-big">
                         <div class="tp-sessions-remaining">
                             <span class="number"><?php echo esc_html( $package->sessions_remaining ); ?></span>
-                            <span class="label"><?php esc_html_e( 'Sessions Remaining', 'treatment-packages-deposits' ); ?></span>
+                            <span class="label"><?php esc_html_e( 'Sessions Remaining', 'treatpack' ); ?></span>
                         </div>
                         <div class="tp-sessions-total">
                             <?php
                             printf(
                                 /* translators: %d: total sessions */
-                                esc_html__( 'of %d purchased', 'treatment-packages-deposits' ),
+                                esc_html__( 'of %d purchased', 'treatpack' ),
                                 $package->sessions_purchased
                             );
                             ?>
@@ -362,7 +362,7 @@ class AdminMenu {
                     <?php if ( 'active' === $package->status && $package->sessions_remaining > 0 ) : ?>
                         <div class="tp-actions-box">
                             <button type="button" class="button button-primary button-large tp-use-session-btn" data-id="<?php echo esc_attr( $package->id ); ?>">
-                                <?php esc_html_e( 'Use Session', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Use Session', 'treatpack' ); ?>
                             </button>
                         </div>
                     <?php endif; ?>
@@ -370,24 +370,24 @@ class AdminMenu {
 
                 <!-- Financial Info -->
                 <div class="tp-detail-card tp-financial-info">
-                    <h3><?php esc_html_e( 'Financial Details', 'treatment-packages-deposits' ); ?></h3>
+                    <h3><?php esc_html_e( 'Financial Details', 'treatpack' ); ?></h3>
 
                     <table class="tp-detail-table">
                         <tr>
-                            <th><?php esc_html_e( 'Total Price', 'treatment-packages-deposits' ); ?></th>
+                            <th><?php esc_html_e( 'Total Price', 'treatpack' ); ?></th>
                             <td><?php echo wc_price( $package->total_price ); ?></td>
                         </tr>
                         <tr>
-                            <th><?php esc_html_e( 'Deposit Paid', 'treatment-packages-deposits' ); ?></th>
+                            <th><?php esc_html_e( 'Deposit Paid', 'treatpack' ); ?></th>
                             <td><?php echo wc_price( $package->deposit_paid ); ?></td>
                         </tr>
                         <tr class="tp-balance-row <?php echo $package->remaining_balance > 0 ? 'has-balance' : ''; ?>">
-                            <th><?php esc_html_e( 'Remaining Balance', 'treatment-packages-deposits' ); ?></th>
+                            <th><?php esc_html_e( 'Remaining Balance', 'treatpack' ); ?></th>
                             <td>
                                 <?php if ( $package->remaining_balance > 0 ) : ?>
                                     <strong><?php echo wc_price( $package->remaining_balance ); ?></strong>
                                 <?php else : ?>
-                                    <span class="tp-paid-full"><?php esc_html_e( 'Paid in full', 'treatment-packages-deposits' ); ?></span>
+                                    <span class="tp-paid-full"><?php esc_html_e( 'Paid in full', 'treatpack' ); ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -395,11 +395,11 @@ class AdminMenu {
 
                     <?php if ( $package->remaining_balance > 0 && 'active' === $package->status ) : ?>
                         <div class="tp-record-payment">
-                            <h4><?php esc_html_e( 'Record Payment', 'treatment-packages-deposits' ); ?></h4>
+                            <h4><?php esc_html_e( 'Record Payment', 'treatpack' ); ?></h4>
                             <div class="tp-payment-form">
                                 <input type="number" id="tp-payment-amount" step="0.01" min="0" max="<?php echo esc_attr( $package->remaining_balance ); ?>" placeholder="0.00">
                                 <button type="button" class="button tp-record-payment-btn" data-id="<?php echo esc_attr( $package->id ); ?>">
-                                    <?php esc_html_e( 'Record Payment', 'treatment-packages-deposits' ); ?>
+                                    <?php esc_html_e( 'Record Payment', 'treatpack' ); ?>
                                 </button>
                             </div>
                         </div>
@@ -408,7 +408,7 @@ class AdminMenu {
 
                 <!-- Customer Info -->
                 <div class="tp-detail-card tp-customer-info">
-                    <h3><?php esc_html_e( 'Customer', 'treatment-packages-deposits' ); ?></h3>
+                    <h3><?php esc_html_e( 'Customer', 'treatpack' ); ?></h3>
 
                     <?php if ( $user ) : ?>
                         <p>
@@ -417,17 +417,17 @@ class AdminMenu {
                         </p>
                         <p>
                             <a href="<?php echo esc_url( get_edit_user_link( $user->ID ) ); ?>" class="button button-small">
-                                <?php esc_html_e( 'View Customer', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'View Customer', 'treatpack' ); ?>
                             </a>
                         </p>
                     <?php else : ?>
-                        <p><?php esc_html_e( 'Guest Customer', 'treatment-packages-deposits' ); ?></p>
+                        <p><?php esc_html_e( 'Guest Customer', 'treatpack' ); ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Order Info -->
                 <div class="tp-detail-card tp-order-info">
-                    <h3><?php esc_html_e( 'Order', 'treatment-packages-deposits' ); ?></h3>
+                    <h3><?php esc_html_e( 'Order', 'treatpack' ); ?></h3>
 
                     <?php if ( $order ) : ?>
                         <p>
@@ -438,13 +438,13 @@ class AdminMenu {
                             <?php echo esc_html( wc_format_datetime( $order->get_date_created() ) ); ?>
                         </p>
                     <?php else : ?>
-                        <p><?php esc_html_e( 'No order linked', 'treatment-packages-deposits' ); ?></p>
+                        <p><?php esc_html_e( 'No order linked', 'treatpack' ); ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Treatment Info -->
                 <div class="tp-detail-card tp-treatment-info">
-                    <h3><?php esc_html_e( 'Treatment', 'treatment-packages-deposits' ); ?></h3>
+                    <h3><?php esc_html_e( 'Treatment', 'treatpack' ); ?></h3>
 
                     <?php if ( $treatment ) : ?>
                         <p>
@@ -453,18 +453,18 @@ class AdminMenu {
                             </a>
                         </p>
                     <?php else : ?>
-                        <p><?php esc_html_e( 'Treatment not found', 'treatment-packages-deposits' ); ?></p>
+                        <p><?php esc_html_e( 'Treatment not found', 'treatpack' ); ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Notes/History -->
                 <div class="tp-detail-card tp-notes-info">
-                    <h3><?php esc_html_e( 'Notes & History', 'treatment-packages-deposits' ); ?></h3>
+                    <h3><?php esc_html_e( 'Notes & History', 'treatpack' ); ?></h3>
                     <div class="tp-notes-content">
                         <?php if ( ! empty( $package->notes ) ) : ?>
                             <pre><?php echo esc_html( $package->notes ); ?></pre>
                         <?php else : ?>
-                            <p class="tp-no-notes"><?php esc_html_e( 'No notes yet.', 'treatment-packages-deposits' ); ?></p>
+                            <p class="tp-no-notes"><?php esc_html_e( 'No notes yet.', 'treatpack' ); ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -472,10 +472,10 @@ class AdminMenu {
                 <!-- Status Actions -->
                 <?php if ( 'active' === $package->status ) : ?>
                     <div class="tp-detail-card tp-status-actions">
-                        <h3><?php esc_html_e( 'Actions', 'treatment-packages-deposits' ); ?></h3>
+                        <h3><?php esc_html_e( 'Actions', 'treatpack' ); ?></h3>
                         <p>
                             <button type="button" class="button tp-cancel-package-btn" data-id="<?php echo esc_attr( $package->id ); ?>">
-                                <?php esc_html_e( 'Cancel Package', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Cancel Package', 'treatpack' ); ?>
                             </button>
                         </p>
                     </div>
@@ -550,24 +550,24 @@ class AdminMenu {
         check_ajax_referer( 'tp_admin_customer', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatpack' ) ) );
         }
 
         $package_id = isset( $_POST['package_id'] ) ? absint( $_POST['package_id'] ) : 0;
         $notes = isset( $_POST['notes'] ) ? sanitize_textarea_field( $_POST['notes'] ) : '';
 
         if ( ! $package_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid package.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid package.', 'treatpack' ) ) );
         }
 
         $result = CustomerPackagesRepository::use_session( $package_id, $notes );
 
         if ( false === $result ) {
-            wp_send_json_error( array( 'message' => __( 'Could not use session.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not use session.', 'treatpack' ) ) );
         }
 
         wp_send_json_success( array(
-            'message'            => __( 'Session marked as used.', 'treatment-packages-deposits' ),
+            'message'            => __( 'Session marked as used.', 'treatpack' ),
             'sessions_remaining' => $result['sessions_remaining'],
             'status'             => $result['status'],
         ) );
@@ -580,24 +580,24 @@ class AdminMenu {
         check_ajax_referer( 'tp_admin_customer', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatpack' ) ) );
         }
 
         $package_id = isset( $_POST['package_id'] ) ? absint( $_POST['package_id'] ) : 0;
         $amount = isset( $_POST['amount'] ) ? floatval( $_POST['amount'] ) : 0;
 
         if ( ! $package_id || $amount <= 0 ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid package or amount.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid package or amount.', 'treatpack' ) ) );
         }
 
         $new_balance = CustomerPackagesRepository::record_payment( $package_id, $amount );
 
         if ( false === $new_balance ) {
-            wp_send_json_error( array( 'message' => __( 'Could not record payment.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not record payment.', 'treatpack' ) ) );
         }
 
         wp_send_json_success( array(
-            'message'           => __( 'Payment recorded successfully.', 'treatment-packages-deposits' ),
+            'message'           => __( 'Payment recorded successfully.', 'treatpack' ),
             'remaining_balance' => $new_balance,
             'formatted_balance' => wc_price( $new_balance ),
         ) );
@@ -610,7 +610,7 @@ class AdminMenu {
         check_ajax_referer( 'tp_admin_customer', 'nonce' );
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatpack' ) ) );
         }
 
         $package_id = isset( $_POST['package_id'] ) ? absint( $_POST['package_id'] ) : 0;
@@ -618,7 +618,7 @@ class AdminMenu {
         $reason = isset( $_POST['reason'] ) ? sanitize_textarea_field( $_POST['reason'] ) : '';
 
         if ( ! $package_id || ! $status ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid package or status.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid package or status.', 'treatpack' ) ) );
         }
 
         if ( 'cancelled' === $status ) {
@@ -628,11 +628,11 @@ class AdminMenu {
         }
 
         if ( ! $result ) {
-            wp_send_json_error( array( 'message' => __( 'Could not update status.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Could not update status.', 'treatpack' ) ) );
         }
 
         wp_send_json_success( array(
-            'message' => __( 'Status updated successfully.', 'treatment-packages-deposits' ),
+            'message' => __( 'Status updated successfully.', 'treatpack' ),
             'status'  => $status,
         ) );
     }

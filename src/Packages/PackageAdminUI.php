@@ -36,7 +36,7 @@ class PackageAdminUI {
     public static function add_meta_boxes() {
         add_meta_box(
             'tp_packages_meta_box',
-            __( 'Treatment Packages', 'treatment-packages-deposits' ),
+            __( 'Treatment Packages', 'treatpack' ),
             array( __CLASS__, 'render_packages_meta_box' ),
             TreatmentPostType::POST_TYPE,
             'normal',
@@ -83,9 +83,9 @@ class PackageAdminUI {
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
                 'nonce'   => wp_create_nonce( 'tp_admin_packages' ),
                 'i18n'    => array(
-                    'confirmDelete'  => __( 'Are you sure you want to delete this package?', 'treatment-packages-deposits' ),
-                    'payAsYouGo'     => __( 'Pay as you go', 'treatment-packages-deposits' ),
-                    'courseOf'       => __( 'Course of %d', 'treatment-packages-deposits' ),
+                    'confirmDelete'  => __( 'Are you sure you want to delete this package?', 'treatpack' ),
+                    'payAsYouGo'     => __( 'Pay as you go', 'treatpack' ),
+                    'courseOf'       => __( 'Course of %d', 'treatpack' ),
                 ),
             )
         );
@@ -108,20 +108,20 @@ class PackageAdminUI {
         ?>
         <div class="tp-packages-admin">
             <p class="description">
-                <?php esc_html_e( 'Add session packages for this treatment. Each package can have its own pricing and deposit settings.', 'treatment-packages-deposits' ); ?>
+                <?php esc_html_e( 'Add session packages for this treatment. Each package can have its own pricing and deposit settings.', 'treatpack' ); ?>
             </p>
 
             <table class="tp-packages-table widefat">
                 <thead>
                     <tr>
-                        <th class="tp-col-sort" title="<?php esc_attr_e( 'Drag to reorder', 'treatment-packages-deposits' ); ?>"></th>
-                        <th class="tp-col-sessions"><?php esc_html_e( 'Sessions', 'treatment-packages-deposits' ); ?></th>
-                        <th class="tp-col-name"><?php esc_html_e( 'Name', 'treatment-packages-deposits' ); ?></th>
-                        <th class="tp-col-price"><?php esc_html_e( 'Total Price', 'treatment-packages-deposits' ); ?></th>
-                        <th class="tp-col-per-session"><?php esc_html_e( 'Per Session', 'treatment-packages-deposits' ); ?></th>
-                        <th class="tp-col-discount"><?php esc_html_e( 'Discount', 'treatment-packages-deposits' ); ?></th>
-                        <th class="tp-col-deposit"><?php esc_html_e( 'Deposit', 'treatment-packages-deposits' ); ?></th>
-                        <th class="tp-col-actions"><?php esc_html_e( 'Actions', 'treatment-packages-deposits' ); ?></th>
+                        <th class="tp-col-sort" title="<?php esc_attr_e( 'Drag to reorder', 'treatpack' ); ?>"></th>
+                        <th class="tp-col-sessions"><?php esc_html_e( 'Sessions', 'treatpack' ); ?></th>
+                        <th class="tp-col-name"><?php esc_html_e( 'Name', 'treatpack' ); ?></th>
+                        <th class="tp-col-price"><?php esc_html_e( 'Total Price', 'treatpack' ); ?></th>
+                        <th class="tp-col-per-session"><?php esc_html_e( 'Per Session', 'treatpack' ); ?></th>
+                        <th class="tp-col-discount"><?php esc_html_e( 'Discount', 'treatpack' ); ?></th>
+                        <th class="tp-col-deposit"><?php esc_html_e( 'Deposit', 'treatpack' ); ?></th>
+                        <th class="tp-col-actions"><?php esc_html_e( 'Actions', 'treatpack' ); ?></th>
                     </tr>
                 </thead>
                 <tbody id="tp-packages-list">
@@ -138,12 +138,12 @@ class PackageAdminUI {
                         <td colspan="8">
                             <button type="button" class="button button-secondary" id="tp-add-package">
                                 <span class="dashicons dashicons-plus-alt2"></span>
-                                <?php esc_html_e( 'Add Package', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Add Package', 'treatpack' ); ?>
                             </button>
 
                             <button type="button" class="button button-secondary" id="tp-add-preset-packages">
                                 <span class="dashicons dashicons-database-add"></span>
-                                <?php esc_html_e( 'Add Preset (1, 6, 8, 10)', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Add Preset (1, 6, 8, 10)', 'treatpack' ); ?>
                             </button>
                         </td>
                     </tr>
@@ -183,7 +183,7 @@ class PackageAdminUI {
         ?>
         <tr class="tp-package-row" data-index="<?php echo esc_attr( $index ); ?>">
             <td class="tp-col-sort">
-                <span class="tp-sort-handle dashicons dashicons-menu" title="<?php esc_attr_e( 'Drag to reorder', 'treatment-packages-deposits' ); ?>"></span>
+                <span class="tp-sort-handle dashicons dashicons-menu" title="<?php esc_attr_e( 'Drag to reorder', 'treatpack' ); ?>"></span>
                 <input type="hidden" name="tp_packages[<?php echo esc_attr( $index ); ?>][id]" value="<?php echo esc_attr( $id ); ?>">
                 <input type="hidden" name="tp_packages[<?php echo esc_attr( $index ); ?>][sort_order]" value="<?php echo esc_attr( $index ); ?>" class="tp-sort-order">
             </td>
@@ -206,7 +206,7 @@ class PackageAdminUI {
                     name="tp_packages[<?php echo esc_attr( $index ); ?>][name]"
                     value="<?php echo esc_attr( $name ); ?>"
                     class="tp-input-name"
-                    placeholder="<?php esc_attr_e( 'Auto-generated if empty', 'treatment-packages-deposits' ); ?>"
+                    placeholder="<?php esc_attr_e( 'Auto-generated if empty', 'treatpack' ); ?>"
                 >
             </td>
 
@@ -252,9 +252,9 @@ class PackageAdminUI {
             <td class="tp-col-deposit">
                 <div class="tp-deposit-fields">
                     <select name="tp_packages[<?php echo esc_attr( $index ); ?>][deposit_type]" class="tp-input-deposit-type">
-                        <option value="none" <?php selected( $deposit_type, 'none' ); ?>><?php esc_html_e( 'Full Payment', 'treatment-packages-deposits' ); ?></option>
-                        <option value="fixed" <?php selected( $deposit_type, 'fixed' ); ?>><?php esc_html_e( 'Fixed', 'treatment-packages-deposits' ); ?></option>
-                        <option value="percentage" <?php selected( $deposit_type, 'percentage' ); ?>><?php esc_html_e( 'Percentage', 'treatment-packages-deposits' ); ?></option>
+                        <option value="none" <?php selected( $deposit_type, 'none' ); ?>><?php esc_html_e( 'Full Payment', 'treatpack' ); ?></option>
+                        <option value="fixed" <?php selected( $deposit_type, 'fixed' ); ?>><?php esc_html_e( 'Fixed', 'treatpack' ); ?></option>
+                        <option value="percentage" <?php selected( $deposit_type, 'percentage' ); ?>><?php esc_html_e( 'Percentage', 'treatpack' ); ?></option>
                     </select>
                     <div class="tp-deposit-value-wrapper" style="<?php echo 'none' === $deposit_type ? 'display:none;' : ''; ?>">
                         <input
@@ -272,9 +272,9 @@ class PackageAdminUI {
 
             <td class="tp-col-actions">
                 <?php if ( $wc_product_id ) : ?>
-                    <span class="tp-wc-linked dashicons dashicons-yes-alt" title="<?php esc_attr_e( 'Linked to WooCommerce product', 'treatment-packages-deposits' ); ?>"></span>
+                    <span class="tp-wc-linked dashicons dashicons-yes-alt" title="<?php esc_attr_e( 'Linked to WooCommerce product', 'treatpack' ); ?>"></span>
                 <?php endif; ?>
-                <button type="button" class="button-link tp-delete-package" title="<?php esc_attr_e( 'Delete package', 'treatment-packages-deposits' ); ?>">
+                <button type="button" class="button-link tp-delete-package" title="<?php esc_attr_e( 'Delete package', 'treatpack' ); ?>">
                     <span class="dashicons dashicons-trash"></span>
                 </button>
             </td>
@@ -358,7 +358,7 @@ class PackageAdminUI {
         check_ajax_referer( 'tp_admin_packages', 'nonce' );
 
         if ( ! current_user_can( 'edit_posts' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatment-packages-deposits' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'treatpack' ) ) );
         }
 
         $index = isset( $_POST['index'] ) ? (int) $_POST['index'] : 0;

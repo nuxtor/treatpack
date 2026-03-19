@@ -329,12 +329,12 @@ class PackageModel {
         }
 
         if ( 1 === $this->sessions ) {
-            return __( 'Pay as you go', 'treatment-packages-deposits' );
+            return __( 'Pay as you go', 'treatpack' );
         }
 
         return sprintf(
             /* translators: %d: number of sessions */
-            __( 'Course of %d', 'treatment-packages-deposits' ),
+            __( 'Course of %d', 'treatpack' ),
             $this->sessions
         );
     }
@@ -348,7 +348,7 @@ class PackageModel {
         if ( $this->discount_percent > 0 ) {
             return sprintf(
                 /* translators: %s: discount percentage */
-                __( '%s%% off', 'treatment-packages-deposits' ),
+                __( '%s%% off', 'treatpack' ),
                 number_format( $this->discount_percent, 0 )
             );
         }

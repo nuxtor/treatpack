@@ -58,8 +58,8 @@ class ImportExport {
     public static function register_menu() {
         add_submenu_page(
             'edit.php?post_type=' . TreatmentPostType::POST_TYPE,
-            __( 'Import / Export', 'treatment-packages-deposits' ),
-            __( 'Import / Export', 'treatment-packages-deposits' ),
+            __( 'Import / Export', 'treatpack' ),
+            __( 'Import / Export', 'treatpack' ),
             'manage_options',
             'tp-import-export',
             array( __CLASS__, 'render_page' )
@@ -93,7 +93,7 @@ class ImportExport {
         $message_type = '';
 
         if ( isset( $_GET['exported'] ) && $_GET['exported'] === '1' ) {
-            $message = __( 'Export completed successfully.', 'treatment-packages-deposits' );
+            $message = __( 'Export completed successfully.', 'treatpack' );
             $message_type = 'success';
         }
 
@@ -101,7 +101,7 @@ class ImportExport {
             $imported = absint( $_GET['imported'] );
             $message = sprintf(
                 /* translators: %d: number of treatments imported */
-                __( 'Import completed! %d treatments imported/updated.', 'treatment-packages-deposits' ),
+                __( 'Import completed! %d treatments imported/updated.', 'treatpack' ),
                 $imported
             );
             $message_type = 'success';
@@ -117,7 +117,7 @@ class ImportExport {
             $updated = absint( $_GET['updated'] ?? 0 );
             $message = sprintf(
                 /* translators: %1$d: deleted count, %2$d: updated count */
-                __( 'Cleanup completed! %1$d single session packages removed, %2$d packages updated with base price.', 'treatment-packages-deposits' ),
+                __( 'Cleanup completed! %1$d single session packages removed, %2$d packages updated with base price.', 'treatpack' ),
                 $deleted,
                 $updated
             );
@@ -130,7 +130,7 @@ class ImportExport {
         $total_packages = self::count_packages();
         ?>
         <div class="wrap tp-import-export-wrap">
-            <h1><?php esc_html_e( 'Import / Export Treatments', 'treatment-packages-deposits' ); ?></h1>
+            <h1><?php esc_html_e( 'Import / Export Treatments', 'treatpack' ); ?></h1>
 
             <?php if ( $message ) : ?>
                 <div class="notice notice-<?php echo esc_attr( $message_type ); ?> is-dismissible">
@@ -141,17 +141,17 @@ class ImportExport {
             <div class="tp-ie-grid">
                 <!-- Export Section -->
                 <div class="tp-ie-card tp-export-card">
-                    <h2><?php esc_html_e( 'Export Treatments', 'treatment-packages-deposits' ); ?></h2>
-                    <p><?php esc_html_e( 'Export all treatments and their pricing packages to a JSON file.', 'treatment-packages-deposits' ); ?></p>
+                    <h2><?php esc_html_e( 'Export Treatments', 'treatpack' ); ?></h2>
+                    <p><?php esc_html_e( 'Export all treatments and their pricing packages to a JSON file.', 'treatpack' ); ?></p>
 
                     <div class="tp-ie-stats">
                         <div class="tp-ie-stat">
                             <span class="tp-ie-stat-number"><?php echo esc_html( $total_treatments ); ?></span>
-                            <span class="tp-ie-stat-label"><?php esc_html_e( 'Treatments', 'treatment-packages-deposits' ); ?></span>
+                            <span class="tp-ie-stat-label"><?php esc_html_e( 'Treatments', 'treatpack' ); ?></span>
                         </div>
                         <div class="tp-ie-stat">
                             <span class="tp-ie-stat-number"><?php echo esc_html( $total_packages ); ?></span>
-                            <span class="tp-ie-stat-label"><?php esc_html_e( 'Packages', 'treatment-packages-deposits' ); ?></span>
+                            <span class="tp-ie-stat-label"><?php esc_html_e( 'Packages', 'treatpack' ); ?></span>
                         </div>
                     </div>
 
@@ -161,28 +161,28 @@ class ImportExport {
                         <div class="tp-ie-options">
                             <label>
                                 <input type="checkbox" name="include_categories" value="1" checked>
-                                <?php esc_html_e( 'Include categories', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Include categories', 'treatpack' ); ?>
                             </label>
                             <label>
                                 <input type="checkbox" name="include_areas" value="1" checked>
-                                <?php esc_html_e( 'Include body areas', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Include body areas', 'treatpack' ); ?>
                             </label>
                             <label>
                                 <input type="checkbox" name="include_images" value="1" checked>
-                                <?php esc_html_e( 'Include image URLs', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Include image URLs', 'treatpack' ); ?>
                             </label>
                         </div>
 
                         <button type="submit" name="tp_export" class="button button-primary button-large">
-                            <?php esc_html_e( 'Download JSON Export', 'treatment-packages-deposits' ); ?>
+                            <?php esc_html_e( 'Download JSON Export', 'treatpack' ); ?>
                         </button>
                     </form>
                 </div>
 
                 <!-- CSV Export Section -->
                 <div class="tp-ie-card tp-csv-export-card">
-                    <h2><?php esc_html_e( 'Export to CSV', 'treatment-packages-deposits' ); ?></h2>
-                    <p><?php esc_html_e( 'Export treatments or packages to CSV format for use in Excel, Google Sheets, etc.', 'treatment-packages-deposits' ); ?></p>
+                    <h2><?php esc_html_e( 'Export to CSV', 'treatpack' ); ?></h2>
+                    <p><?php esc_html_e( 'Export treatments or packages to CSV format for use in Excel, Google Sheets, etc.', 'treatpack' ); ?></p>
 
                     <form method="post" action="">
                         <?php wp_nonce_field( 'tp_csv_export_treatments', 'tp_csv_export_nonce' ); ?>
@@ -190,61 +190,61 @@ class ImportExport {
                         <div class="tp-ie-options">
                             <label class="tp-ie-radio">
                                 <input type="radio" name="csv_export_type" value="treatments" checked>
-                                <?php esc_html_e( 'Treatments Summary', 'treatment-packages-deposits' ); ?>
-                                <span class="tp-ie-radio-desc"><?php esc_html_e( 'One row per treatment with stats', 'treatment-packages-deposits' ); ?></span>
+                                <?php esc_html_e( 'Treatments Summary', 'treatpack' ); ?>
+                                <span class="tp-ie-radio-desc"><?php esc_html_e( 'One row per treatment with stats', 'treatpack' ); ?></span>
                             </label>
                             <label class="tp-ie-radio">
                                 <input type="radio" name="csv_export_type" value="packages">
-                                <?php esc_html_e( 'All Packages', 'treatment-packages-deposits' ); ?>
-                                <span class="tp-ie-radio-desc"><?php esc_html_e( 'One row per package with full pricing details', 'treatment-packages-deposits' ); ?></span>
+                                <?php esc_html_e( 'All Packages', 'treatpack' ); ?>
+                                <span class="tp-ie-radio-desc"><?php esc_html_e( 'One row per package with full pricing details', 'treatpack' ); ?></span>
                             </label>
                         </div>
 
                         <button type="submit" name="tp_csv_export" class="button button-primary button-large">
-                            <?php esc_html_e( 'Download CSV', 'treatment-packages-deposits' ); ?>
+                            <?php esc_html_e( 'Download CSV', 'treatpack' ); ?>
                         </button>
                     </form>
                 </div>
 
                 <!-- Import Section -->
                 <div class="tp-ie-card tp-import-card">
-                    <h2><?php esc_html_e( 'Import Treatments', 'treatment-packages-deposits' ); ?></h2>
-                    <p><?php esc_html_e( 'Import treatments and packages from a JSON export file.', 'treatment-packages-deposits' ); ?></p>
+                    <h2><?php esc_html_e( 'Import Treatments', 'treatpack' ); ?></h2>
+                    <p><?php esc_html_e( 'Import treatments and packages from a JSON export file.', 'treatpack' ); ?></p>
 
                     <form method="post" action="" enctype="multipart/form-data">
                         <?php wp_nonce_field( 'tp_import_treatments', 'tp_import_nonce' ); ?>
 
                         <div class="tp-ie-file-upload">
-                            <label for="tp_import_file"><?php esc_html_e( 'Select JSON file:', 'treatment-packages-deposits' ); ?></label>
+                            <label for="tp_import_file"><?php esc_html_e( 'Select JSON file:', 'treatpack' ); ?></label>
                             <input type="file" name="tp_import_file" id="tp_import_file" accept=".json" required>
                         </div>
 
                         <div class="tp-ie-options">
                             <label>
                                 <input type="checkbox" name="update_existing" value="1" checked>
-                                <?php esc_html_e( 'Update existing treatments (matched by title)', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Update existing treatments (matched by title)', 'treatpack' ); ?>
                             </label>
                             <label>
                                 <input type="checkbox" name="import_categories" value="1" checked>
-                                <?php esc_html_e( 'Import categories', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Import categories', 'treatpack' ); ?>
                             </label>
                             <label>
                                 <input type="checkbox" name="import_areas" value="1" checked>
-                                <?php esc_html_e( 'Import body areas', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Import body areas', 'treatpack' ); ?>
                             </label>
                             <label>
                                 <input type="checkbox" name="skip_existing_packages" value="1">
-                                <?php esc_html_e( 'Skip packages for existing treatments', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Skip packages for existing treatments', 'treatpack' ); ?>
                             </label>
                         </div>
 
                         <div class="tp-ie-warning">
-                            <strong><?php esc_html_e( 'Note:', 'treatment-packages-deposits' ); ?></strong>
-                            <?php esc_html_e( 'Importing will create new treatments or update existing ones. Make sure to backup your database before importing.', 'treatment-packages-deposits' ); ?>
+                            <strong><?php esc_html_e( 'Note:', 'treatpack' ); ?></strong>
+                            <?php esc_html_e( 'Importing will create new treatments or update existing ones. Make sure to backup your database before importing.', 'treatpack' ); ?>
                         </div>
 
                         <button type="submit" name="tp_import" class="button button-primary button-large">
-                            <?php esc_html_e( 'Import Treatments', 'treatment-packages-deposits' ); ?>
+                            <?php esc_html_e( 'Import Treatments', 'treatpack' ); ?>
                         </button>
                     </form>
                 </div>
@@ -256,17 +256,17 @@ class ImportExport {
             $zero_price_count = self::count_zero_price_packages();
             ?>
             <div class="tp-ie-card tp-cleanup-card">
-                <h2><?php esc_html_e( 'Package Cleanup', 'treatment-packages-deposits' ); ?></h2>
-                <p><?php esc_html_e( 'Remove single session packages (use base price instead) and fix packages with £0.00 price.', 'treatment-packages-deposits' ); ?></p>
+                <h2><?php esc_html_e( 'Package Cleanup', 'treatpack' ); ?></h2>
+                <p><?php esc_html_e( 'Remove single session packages (use base price instead) and fix packages with £0.00 price.', 'treatpack' ); ?></p>
 
                 <div class="tp-ie-stats">
                     <div class="tp-ie-stat">
                         <span class="tp-ie-stat-number"><?php echo esc_html( $single_session_count ); ?></span>
-                        <span class="tp-ie-stat-label"><?php esc_html_e( 'Single Session Packages', 'treatment-packages-deposits' ); ?></span>
+                        <span class="tp-ie-stat-label"><?php esc_html_e( 'Single Session Packages', 'treatpack' ); ?></span>
                     </div>
                     <div class="tp-ie-stat">
                         <span class="tp-ie-stat-number"><?php echo esc_html( $zero_price_count ); ?></span>
-                        <span class="tp-ie-stat-label"><?php esc_html_e( 'Packages with £0.00', 'treatment-packages-deposits' ); ?></span>
+                        <span class="tp-ie-stat-label"><?php esc_html_e( 'Packages with £0.00', 'treatpack' ); ?></span>
                     </div>
                 </div>
 
@@ -277,42 +277,42 @@ class ImportExport {
                         <div class="tp-ie-options">
                             <label>
                                 <input type="checkbox" name="delete_single_sessions" value="1" checked>
-                                <?php esc_html_e( 'Delete single session packages (sessions = 1)', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Delete single session packages (sessions = 1)', 'treatpack' ); ?>
                             </label>
                             <label>
                                 <input type="checkbox" name="fix_zero_prices" value="1" checked>
-                                <?php esc_html_e( 'Update £0.00 packages with treatment base price × sessions', 'treatment-packages-deposits' ); ?>
+                                <?php esc_html_e( 'Update £0.00 packages with treatment base price × sessions', 'treatpack' ); ?>
                             </label>
                         </div>
 
                         <div class="tp-ie-warning">
-                            <strong><?php esc_html_e( 'Warning:', 'treatment-packages-deposits' ); ?></strong>
-                            <?php esc_html_e( 'This action cannot be undone. Make sure to backup your database or export your data first.', 'treatment-packages-deposits' ); ?>
+                            <strong><?php esc_html_e( 'Warning:', 'treatpack' ); ?></strong>
+                            <?php esc_html_e( 'This action cannot be undone. Make sure to backup your database or export your data first.', 'treatpack' ); ?>
                         </div>
 
                         <button type="submit" name="tp_cleanup" class="button button-primary button-large">
-                            <?php esc_html_e( 'Run Cleanup', 'treatment-packages-deposits' ); ?>
+                            <?php esc_html_e( 'Run Cleanup', 'treatpack' ); ?>
                         </button>
                     </form>
                 <?php else : ?>
                     <p class="tp-ie-success-msg">
                         <span class="dashicons dashicons-yes-alt"></span>
-                        <?php esc_html_e( 'No cleanup needed. All packages are properly configured.', 'treatment-packages-deposits' ); ?>
+                        <?php esc_html_e( 'No cleanup needed. All packages are properly configured.', 'treatpack' ); ?>
                     </p>
                 <?php endif; ?>
             </div>
 
             <!-- Export Format Info -->
             <div class="tp-ie-card tp-info-card">
-                <h2><?php esc_html_e( 'Export Format', 'treatment-packages-deposits' ); ?></h2>
-                <p><?php esc_html_e( 'The export file contains:', 'treatment-packages-deposits' ); ?></p>
+                <h2><?php esc_html_e( 'Export Format', 'treatpack' ); ?></h2>
+                <p><?php esc_html_e( 'The export file contains:', 'treatpack' ); ?></p>
                 <ul>
-                    <li><?php esc_html_e( 'Treatment categories with hierarchy', 'treatment-packages-deposits' ); ?></li>
-                    <li><?php esc_html_e( 'Treatment body areas', 'treatment-packages-deposits' ); ?></li>
-                    <li><?php esc_html_e( 'All treatments with title, content, excerpt, and settings', 'treatment-packages-deposits' ); ?></li>
-                    <li><?php esc_html_e( 'All pricing packages with sessions, prices, and deposit settings', 'treatment-packages-deposits' ); ?></li>
+                    <li><?php esc_html_e( 'Treatment categories with hierarchy', 'treatpack' ); ?></li>
+                    <li><?php esc_html_e( 'Treatment body areas', 'treatpack' ); ?></li>
+                    <li><?php esc_html_e( 'All treatments with title, content, excerpt, and settings', 'treatpack' ); ?></li>
+                    <li><?php esc_html_e( 'All pricing packages with sessions, prices, and deposit settings', 'treatpack' ); ?></li>
                 </ul>
-                <p><strong><?php esc_html_e( 'Note:', 'treatment-packages-deposits' ); ?></strong> <?php esc_html_e( 'WooCommerce product IDs are not exported as they need to be regenerated on import via product sync.', 'treatment-packages-deposits' ); ?></p>
+                <p><strong><?php esc_html_e( 'Note:', 'treatpack' ); ?></strong> <?php esc_html_e( 'WooCommerce product IDs are not exported as they need to be regenerated on import via product sync.', 'treatpack' ); ?></p>
             </div>
         </div>
         <?php
@@ -708,7 +708,7 @@ class ImportExport {
 
         // Check file upload
         if ( ! isset( $_FILES['tp_import_file'] ) || $_FILES['tp_import_file']['error'] !== UPLOAD_ERR_OK ) {
-            self::redirect_with_error( __( 'File upload failed. Please try again.', 'treatment-packages-deposits' ) );
+            self::redirect_with_error( __( 'File upload failed. Please try again.', 'treatpack' ) );
             return;
         }
 
@@ -717,7 +717,7 @@ class ImportExport {
         // Validate file type
         $file_info = wp_check_filetype( $file['name'] );
         if ( $file_info['ext'] !== 'json' ) {
-            self::redirect_with_error( __( 'Invalid file type. Please upload a JSON file.', 'treatment-packages-deposits' ) );
+            self::redirect_with_error( __( 'Invalid file type. Please upload a JSON file.', 'treatpack' ) );
             return;
         }
 
@@ -726,13 +726,13 @@ class ImportExport {
         $import_data = json_decode( $json_content, true );
 
         if ( json_last_error() !== JSON_ERROR_NONE ) {
-            self::redirect_with_error( __( 'Invalid JSON file. Please check the file format.', 'treatment-packages-deposits' ) );
+            self::redirect_with_error( __( 'Invalid JSON file. Please check the file format.', 'treatpack' ) );
             return;
         }
 
         // Validate import data structure
         if ( ! isset( $import_data['treatments'] ) || ! is_array( $import_data['treatments'] ) ) {
-            self::redirect_with_error( __( 'Invalid export file format. Missing treatments data.', 'treatment-packages-deposits' ) );
+            self::redirect_with_error( __( 'Invalid export file format. Missing treatments data.', 'treatpack' ) );
             return;
         }
 

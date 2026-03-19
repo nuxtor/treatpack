@@ -91,6 +91,7 @@ final class Plugin {
         Packages\PackageAdminUI::init();
         Admin\AdminMenu::init();
         Admin\ImportExport::init();
+        Admin\ShortcodeGenerator::init();
     }
 
     /**
@@ -176,10 +177,10 @@ final class Plugin {
                 'cartUrl' => wc_get_cart_url(),
                 'nonce'   => wp_create_nonce( 'tp_deposits_nonce' ),
                 'i18n'    => array(
-                    'addingToCart'  => __( 'Adding...', 'treatment-packages-deposits' ),
-                    'addedToCart'   => __( 'Added to cart!', 'treatment-packages-deposits' ),
-                    'error'         => __( 'An error occurred. Please try again.', 'treatment-packages-deposits' ),
-                    'noTreatments'  => __( 'No treatments found in this category.', 'treatment-packages-deposits' ),
+                    'addingToCart'  => __( 'Adding...', 'treatpack' ),
+                    'addedToCart'   => __( 'Added to cart!', 'treatpack' ),
+                    'error'         => __( 'An error occurred. Please try again.', 'treatpack' ),
+                    'noTreatments'  => __( 'No treatments found in this category.', 'treatpack' ),
                 ),
             )
         );

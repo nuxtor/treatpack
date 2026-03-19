@@ -1,11 +1,11 @@
 <?php
 /**
- * Uninstall Treatment Packages & Deposits
+ * Uninstall TreatPack - Treatment Packages for WooCommerce
  *
  * This file runs when the plugin is deleted from WordPress.
  * It removes all plugin data including database tables, options, and post meta.
  *
- * @package TreatmentPackages
+ * @package TreatPack
  */
 
 // If uninstall.php is not called by WordPress, exit.

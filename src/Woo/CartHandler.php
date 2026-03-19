@@ -139,24 +139,24 @@ class CartHandler {
 
         // Sessions
         $item_data[] = array(
-            'key'   => __( 'Sessions', 'treatment-packages-deposits' ),
+            'key'   => __( 'Sessions', 'treatpack' ),
             'value' => $package_data['sessions'],
         );
 
         // Show deposit breakdown if applicable
         if ( $package_data['has_deposit'] ) {
             $item_data[] = array(
-                'key'   => __( 'Full Price', 'treatment-packages-deposits' ),
+                'key'   => __( 'Full Price', 'treatpack' ),
                 'value' => wc_price( $package_data['total_price'] ),
             );
 
             $item_data[] = array(
-                'key'   => __( 'Deposit (Pay Now)', 'treatment-packages-deposits' ),
+                'key'   => __( 'Deposit (Pay Now)', 'treatpack' ),
                 'value' => wc_price( $package_data['deposit_amount'] ),
             );
 
             $item_data[] = array(
-                'key'   => __( 'Remaining Balance', 'treatment-packages-deposits' ),
+                'key'   => __( 'Remaining Balance', 'treatpack' ),
                 'value' => wc_price( $package_data['remaining_balance'] ),
             );
         }
@@ -180,7 +180,7 @@ class CartHandler {
         $package_data = $cart_item['tp_package_data'];
 
         if ( $package_data['has_deposit'] ) {
-            $name .= ' <span class="tp-deposit-badge">' . esc_html__( '(Deposit)', 'treatment-packages-deposits' ) . '</span>';
+            $name .= ' <span class="tp-deposit-badge">' . esc_html__( '(Deposit)', 'treatpack' ) . '</span>';
         }
 
         return $name;
@@ -214,12 +214,12 @@ class CartHandler {
 
         // Add visible meta for admin
         if ( $package_data['has_deposit'] ) {
-            $item->add_meta_data( __( 'Full Price', 'treatment-packages-deposits' ), wc_price( $package_data['total_price'] ) );
-            $item->add_meta_data( __( 'Deposit Paid', 'treatment-packages-deposits' ), wc_price( $package_data['deposit_amount'] ) );
-            $item->add_meta_data( __( 'Balance Due', 'treatment-packages-deposits' ), wc_price( $package_data['remaining_balance'] ) );
+            $item->add_meta_data( __( 'Full Price', 'treatpack' ), wc_price( $package_data['total_price'] ) );
+            $item->add_meta_data( __( 'Deposit Paid', 'treatpack' ), wc_price( $package_data['deposit_amount'] ) );
+            $item->add_meta_data( __( 'Balance Due', 'treatpack' ), wc_price( $package_data['remaining_balance'] ) );
         }
 
-        $item->add_meta_data( __( 'Sessions', 'treatment-packages-deposits' ), $package_data['sessions'] );
+        $item->add_meta_data( __( 'Sessions', 'treatpack' ), $package_data['sessions'] );
     }
 
     /**
@@ -260,27 +260,27 @@ class CartHandler {
         ?>
         <tr class="tp-deposit-summary">
             <th colspan="2">
-                <strong><?php esc_html_e( 'Treatment Package Summary', 'treatment-packages-deposits' ); ?></strong>
+                <strong><?php esc_html_e( 'Treatment Package Summary', 'treatpack' ); ?></strong>
             </th>
         </tr>
         <tr class="tp-deposit-full-price">
-            <th><?php esc_html_e( 'Full Package Price', 'treatment-packages-deposits' ); ?></th>
-            <td data-title="<?php esc_attr_e( 'Full Package Price', 'treatment-packages-deposits' ); ?>">
+            <th><?php esc_html_e( 'Full Package Price', 'treatpack' ); ?></th>
+            <td data-title="<?php esc_attr_e( 'Full Package Price', 'treatpack' ); ?>">
                 <?php echo wc_price( $total_full_price ); ?>
             </td>
         </tr>
         <tr class="tp-deposit-amount">
-            <th><?php esc_html_e( 'Deposit (Paying Today)', 'treatment-packages-deposits' ); ?></th>
-            <td data-title="<?php esc_attr_e( 'Deposit', 'treatment-packages-deposits' ); ?>">
+            <th><?php esc_html_e( 'Deposit (Paying Today)', 'treatpack' ); ?></th>
+            <td data-title="<?php esc_attr_e( 'Deposit', 'treatpack' ); ?>">
                 <strong><?php echo wc_price( $total_deposit ); ?></strong>
             </td>
         </tr>
         <tr class="tp-deposit-remaining">
-            <th><?php esc_html_e( 'Remaining Balance', 'treatment-packages-deposits' ); ?></th>
-            <td data-title="<?php esc_attr_e( 'Remaining Balance', 'treatment-packages-deposits' ); ?>">
+            <th><?php esc_html_e( 'Remaining Balance', 'treatpack' ); ?></th>
+            <td data-title="<?php esc_attr_e( 'Remaining Balance', 'treatpack' ); ?>">
                 <?php echo wc_price( $total_remaining ); ?>
                 <small class="tp-balance-note">
-                    <?php esc_html_e( '(Due at appointment)', 'treatment-packages-deposits' ); ?>
+                    <?php esc_html_e( '(Due at appointment)', 'treatpack' ); ?>
                 </small>
             </td>
         </tr>
@@ -296,7 +296,7 @@ class CartHandler {
         // Ensure WooCommerce is loaded
         if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
             wp_send_json_error( array(
-                'message' => __( 'WooCommerce is not available.', 'treatment-packages-deposits' ),
+                'message' => __( 'WooCommerce is not available.', 'treatpack' ),
             ) );
         }
 
@@ -306,7 +306,7 @@ class CartHandler {
 
         if ( ! $product_id ) {
             wp_send_json_error( array(
-                'message' => __( 'Invalid product.', 'treatment-packages-deposits' ),
+                'message' => __( 'Invalid product.', 'treatpack' ),
             ) );
         }
 
@@ -315,7 +315,7 @@ class CartHandler {
 
         if ( ! $product ) {
             wp_send_json_error( array(
-                'message' => __( 'Product not found.', 'treatment-packages-deposits' ),
+                'message' => __( 'Product not found.', 'treatpack' ),
             ) );
         }
 
@@ -324,7 +324,7 @@ class CartHandler {
 
         if ( ! $cart_item_key ) {
             wp_send_json_error( array(
-                'message' => __( 'Could not add to cart. Please try again.', 'treatment-packages-deposits' ),
+                'message' => __( 'Could not add to cart. Please try again.', 'treatpack' ),
             ) );
         }
 
@@ -341,7 +341,7 @@ class CartHandler {
         $cart_hash = WC()->cart->get_cart_hash();
 
         wp_send_json_success( array(
-            'message'    => __( 'Product added to cart.', 'treatment-packages-deposits' ),
+            'message'    => __( 'Product added to cart.', 'treatpack' ),
             'fragments'  => apply_filters( 'woocommerce_add_to_cart_fragments', $fragments ),
             'cart_hash'  => $cart_hash,
             'cart_count' => WC()->cart->get_cart_contents_count(),
