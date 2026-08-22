@@ -1,0 +1,65 @@
+/**
+ * TreatPack Import/Export Admin Styles
+ */
+
+.treatpack-import-export {
+    max-width: 1200px;
+}
+
+.treatpack-import-export-panels {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.treatpack-panel {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+.treatpack-panel h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.treatpack-panel p {
+    margin-bottom: 15px;
+}
+
+.treatpack-panel label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.treatpack-panel input[type="file"] {
+    margin-top: 5px;
+}
+
+.treatpack-panel input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.treatpack-sample-format {
+    grid-column: 1 / -1;
+}
+
+.treatpack-sample-format pre {
+    background: #f8f9fa;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .treatpack-import-export-panels {
+        grid-template-columns: 1fr;
+    }
+}

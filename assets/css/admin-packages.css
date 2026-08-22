@@ -1,0 +1,247 @@
+/**
+ * TreatPack Package Admin Styles
+ */
+
+.treatpack-packages-wrap {
+    padding: 10px 0;
+}
+
+.treatpack-packages-list {
+    margin-bottom: 20px;
+}
+
+.treatpack-no-packages {
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* Package Row */
+.treatpack-package-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    transition: box-shadow 0.2s ease;
+}
+
+.treatpack-package-row:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.treatpack-package-row.inactive {
+    opacity: 0.6;
+    background: #f9f9f9;
+}
+
+.treatpack-package-row.ui-sortable-helper {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.treatpack-package-row.ui-sortable-placeholder {
+    visibility: visible !important;
+    background: #e0e7ed;
+    border: 2px dashed #0073aa;
+}
+
+.treatpack-package-handle {
+    cursor: move;
+    padding: 5px;
+    margin-right: 10px;
+    color: #999;
+}
+
+.treatpack-package-handle:hover {
+    color: #333;
+}
+
+.treatpack-package-info {
+    flex: 1;
+}
+
+.treatpack-package-name {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.treatpack-package-details {
+    color: #666;
+    font-size: 13px;
+}
+
+.treatpack-package-details del {
+    color: #999;
+}
+
+.treatpack-package-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    border-radius: 3px;
+    margin-left: 10px;
+}
+
+.treatpack-package-badge.inactive {
+    background: #f0ad4e;
+    color: #fff;
+}
+
+.treatpack-package-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.treatpack-package-actions .button {
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.treatpack-package-actions .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.treatpack-delete-package:hover {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+/* Package Edit Form (inline) */
+.treatpack-package-edit-form {
+    width: 100%;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.treatpack-package-row.editing {
+    flex-wrap: wrap;
+}
+
+.treatpack-package-row.editing .treatpack-package-handle,
+.treatpack-package-row.editing .treatpack-package-info,
+.treatpack-package-row.editing .treatpack-package-actions {
+    display: none;
+}
+
+.treatpack-package-row.editing .treatpack-package-edit-form {
+    display: block !important;
+}
+
+/* Add Package Section */
+.treatpack-add-package {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.treatpack-add-package h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Package Form */
+.treatpack-package-form {
+    max-width: 100%;
+}
+
+.treatpack-form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.treatpack-form-field {
+    flex: 1;
+}
+
+.treatpack-form-field-small {
+    flex: 0 0 100px;
+}
+
+.treatpack-form-field-full {
+    flex: 0 0 100%;
+}
+
+.treatpack-form-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.treatpack-form-field label .required {
+    color: #dc3545;
+}
+
+.treatpack-form-field input[type="text"],
+.treatpack-form-field input[type="number"],
+.treatpack-form-field select,
+.treatpack-form-field textarea {
+    width: 100%;
+    padding: 8px 10px;
+}
+
+.treatpack-form-field input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.treatpack-form-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    margin-top: 5px;
+}
+
+/* Deposit field visibility */
+.treatpack-deposit-amount-field.hidden {
+    display: none;
+}
+
+/* Loading state */
+.treatpack-save-package.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .treatpack-form-row {
+        flex-wrap: wrap;
+    }
+
+    .treatpack-form-field {
+        flex: 0 0 100%;
+    }
+
+    .treatpack-form-field-small {
+        flex: 0 0 100%;
+    }
+
+    .treatpack-package-row {
+        flex-wrap: wrap;
+    }
+
+    .treatpack-package-actions {
+        width: 100%;
+        margin-top: 10px;
+        justify-content: flex-end;
+    }
+}

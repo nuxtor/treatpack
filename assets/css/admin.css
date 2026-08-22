@@ -1,0 +1,24 @@
+/**
+ * TreatPack Admin Styles
+ */
+
+/* Treatment Settings Meta Box */
+#treatpack_treatment_settings .widefat {
+    margin-top: 5px;
+}
+
+#treatpack_treatment_settings .description {
+    display: block;
+    margin-top: 4px;
+    color: #666;
+    font-style: italic;
+}
+
+#treatpack_treatment_settings p {
+    margin-bottom: 15px;
+}
+
+#treatpack_treatment_settings label strong {
+    display: block;
+    margin-bottom: 2px;
+}

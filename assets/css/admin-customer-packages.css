@@ -1,0 +1,182 @@
+/**
+ * TreatPack Customer Packages Admin Styles
+ */
+
+.treatpack-customer-packages {
+    max-width: 1400px;
+}
+
+/* Stats Cards */
+.treatpack-stats-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.treatpack-stat-card {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.treatpack-stat-card .stat-value {
+    display: block;
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    line-height: 1.2;
+}
+
+.treatpack-stat-card .stat-label {
+    display: block;
+    margin-top: 5px;
+    font-size: 13px;
+    color: #666;
+}
+
+/* Filters */
+.treatpack-filters {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+.treatpack-filters form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.treatpack-filters select,
+.treatpack-filters input[type="text"] {
+    padding: 6px 10px;
+    min-width: 150px;
+}
+
+/* Table */
+.treatpack-customer-packages .wp-list-table {
+    margin-top: 0;
+}
+
+.treatpack-customer-packages .wp-list-table td {
+    vertical-align: middle;
+}
+
+/* Sessions display */
+.sessions-display {
+    font-size: 14px;
+}
+
+.sessions-display strong {
+    color: #2c3e50;
+}
+
+/* Balance */
+.balance-due {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.balance-paid {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.balance-na {
+    color: #999;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-completed {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-expired {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Actions column */
+.treatpack-customer-packages td.actions {
+    white-space: nowrap;
+}
+
+.treatpack-customer-packages td.actions .button {
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
+    margin-right: 3px;
+}
+
+.treatpack-customer-packages td.actions .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 28px;
+}
+
+.status-dropdown {
+    margin-top: 8px;
+    display: flex;
+    gap: 5px;
+}
+
+.status-dropdown select {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.status-dropdown .button {
+    width: auto !important;
+    padding: 0 8px !important;
+}
+
+/* Responsive */
+@media screen and (max-width: 1200px) {
+    .treatpack-stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .treatpack-stats-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .treatpack-filters form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .treatpack-filters select,
+    .treatpack-filters input[type="text"] {
+        width: 100%;
+    }
+}

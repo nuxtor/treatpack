@@ -1,0 +1,348 @@
+/**
+ * TreatPack Frontend Styles
+ */
+
+/* Wrapper */
+.treatpack-wrapper {
+    display: flex;
+    gap: 30px;
+    padding: 20px 0;
+}
+
+/* Category Sidebar */
+.treatpack-category-sidebar {
+    flex: 0 0 220px;
+}
+
+.treatpack-category-sidebar h4 {
+    margin: 0 0 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.treatpack-category-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.treatpack-category-list li {
+    margin-bottom: 8px;
+}
+
+.treatpack-category-filter {
+    display: block;
+    padding: 8px 12px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.treatpack-category-filter:hover {
+    background: #f5f5f5;
+}
+
+.treatpack-category-filter.active {
+    background: #2c3e50;
+    color: #fff;
+}
+
+.treatpack-category-filter .count {
+    color: #888;
+    font-size: 0.9em;
+}
+
+.treatpack-category-filter.active .count {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Treatment Grid */
+.treatpack-treatments {
+    flex: 1;
+    display: grid;
+    gap: 20px;
+}
+
+.treatpack-columns-1 { grid-template-columns: 1fr; }
+.treatpack-columns-2 { grid-template-columns: repeat(2, 1fr); }
+.treatpack-columns-3 { grid-template-columns: repeat(3, 1fr); }
+.treatpack-columns-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Treatment Card */
+.treatpack-treatment-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+}
+
+.treatpack-treatment-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.treatpack-treatment-image-wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.treatpack-treatment-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.treatpack-treatment-content {
+    padding: 20px;
+}
+
+.treatpack-treatment-title {
+    margin: 0 0 10px;
+    font-size: 1.25em;
+    font-weight: 600;
+}
+
+.treatpack-treatment-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.treatpack-treatment-title a:hover {
+    color: #2c3e50;
+}
+
+.treatpack-treatment-excerpt {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    font-size: 0.95em;
+}
+
+.treatpack-treatment-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.treatpack-treatment-price {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.treatpack-treatment-duration {
+    color: #888;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.treatpack-treatment-duration .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Package Selection */
+.treatpack-packages {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.treatpack-package-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    background: #fff;
+}
+
+.treatpack-selected-price {
+    margin-top: 10px;
+    font-weight: 600;
+    color: #2c3e50;
+    min-height: 24px;
+}
+
+.treatpack-selected-price small {
+    font-weight: normal;
+    color: #666;
+}
+
+.treatpack-add-to-cart,
+.treatpack-add-to-cart-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px 20px;
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.treatpack-add-to-cart:hover,
+.treatpack-add-to-cart-btn:hover {
+    background: #1a252f;
+}
+
+.treatpack-add-to-cart:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Single Treatment View */
+.treatpack-single-treatments {
+    padding: 20px 0;
+}
+
+.treatpack-treatment-single {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #eee;
+}
+
+.treatpack-treatment-single:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.treatpack-treatment-single .treatpack-treatment-image {
+    height: auto;
+    border-radius: 8px;
+}
+
+.treatpack-treatment-details .treatpack-treatment-title {
+    font-size: 1.75em;
+    margin-bottom: 20px;
+}
+
+.treatpack-treatment-description {
+    margin: 20px 0;
+    line-height: 1.7;
+    color: #444;
+}
+
+/* Packages Table */
+.treatpack-packages-table {
+    margin-top: 30px;
+}
+
+.treatpack-packages-table h3 {
+    margin-bottom: 15px;
+}
+
+.treatpack-packages-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.treatpack-packages-table th,
+.treatpack-packages-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.treatpack-packages-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.treatpack-packages-table tr:hover {
+    background: #f8f9fa;
+}
+
+.treatpack-packages-table del {
+    color: #999;
+    font-size: 0.9em;
+}
+
+.treatpack-packages-table .treatpack-add-to-cart-btn {
+    width: auto;
+    padding: 8px 16px;
+    margin: 0;
+}
+
+/* No treatments message */
+.treatpack-no-treatments {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Order item info */
+.treatpack-order-item-info {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.treatpack-order-item-info p {
+    margin: 5px 0;
+}
+
+/* Responsive */
+@media screen and (max-width: 992px) {
+    .treatpack-wrapper {
+        flex-direction: column;
+    }
+
+    .treatpack-category-sidebar {
+        flex: none;
+        width: 100%;
+    }
+
+    .treatpack-category-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .treatpack-category-list li {
+        margin: 0;
+    }
+
+    .treatpack-columns-3,
+    .treatpack-columns-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .treatpack-treatment-single {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .treatpack-columns-2,
+    .treatpack-columns-3,
+    .treatpack-columns-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .treatpack-packages-table {
+        overflow-x: auto;
+    }
+
+    .treatpack-packages-table table {
+        min-width: 500px;
+    }
+}
